@@ -21,6 +21,12 @@ stages:
         versionSpec: '20.x'
       displayName: 'Install Node.js'
 
+    - task: Cache@2
+      inputs:
+        key: 'npm | "$(Agent.OS)" | package-lock.json'
+        path: '$(npm_config_cache)'
+      displayName: 'Cache npm packages'
+
     - task: Npm@1
       displayName: 'npm install'
       inputs:
@@ -45,6 +51,7 @@ stages:
       inputs:
         command: 'custom'
         customCommand: 'run build -- --configuration=test'
+      continueOnError: false
 
     # Replace tokens in test build
     - task: replacetokens@5
@@ -55,11 +62,6 @@ stages:
         writeBOM: true
         actionOnMissing: 'warn'
         keepToken: false
-        actionOnNoFiles: 'continue'
-        enableTransforms: false
-        enableRecursion: false
-        useLegacyPattern: false
-        enableTelemetry: true
         tokens: |
           TEST_API_URL=$(TEST_API_URL)
           TEST_SIGNALR_URL=$(TEST_SIGNALR_URL)
@@ -76,6 +78,7 @@ stages:
       inputs:
         command: 'custom'
         customCommand: 'run build -- --configuration=production'
+      continueOnError: false
 
     # Replace tokens in production build
     - task: replacetokens@5
@@ -86,11 +89,6 @@ stages:
         writeBOM: true
         actionOnMissing: 'warn'
         keepToken: false
-        actionOnNoFiles: 'continue'
-        enableTransforms: false
-        enableRecursion: false
-        useLegacyPattern: false
-        enableTelemetry: true
         tokens: |
           PROD_API_URL=$(PROD_API_URL)
           PROD_SIGNALR_URL=$(PROD_SIGNALR_URL)
@@ -124,19 +122,27 @@ stages:
       runOnce:
         deploy:
           steps:
-          - task: FileTransform@1
+          - task: AzureAppServiceManage@0
+            displayName: 'Stop Test App Service'
             inputs:
-              folderPath: '$(Pipeline.Workspace)/drop/test'
-              fileType: 'json'
-              targetFiles: '**/environment*.js'
+              azureSubscription: 'SocialMediaDetoxConnection'
+              Action: 'Stop Azure App Service'
+              WebAppName: 'smd-web-test'
 
           - task: AzureWebApp@1
             displayName: 'Deploy to Test App Service'
             inputs:
-              azureSubscription: 'Your-Azure-Subscription-Connection'
+              azureSubscription: 'SocialMediaDetoxConnection'
               appName: 'smd-web-test'
               package: '$(Pipeline.Workspace)/drop/test/**'
               appType: 'webApp'
+
+          - task: AzureAppServiceManage@0
+            displayName: 'Start Test App Service'
+            inputs:
+              azureSubscription: 'SocialMediaDetoxConnection'
+              Action: 'Start Azure App Service'
+              WebAppName: 'smd-web-test'
 
 - stage: DeployProduction
   displayName: Deploy to Production
@@ -154,16 +160,24 @@ stages:
       runOnce:
         deploy:
           steps:
-          - task: FileTransform@1
+          - task: AzureAppServiceManage@0
+            displayName: 'Stop Production App Service'
             inputs:
-              folderPath: '$(Pipeline.Workspace)/drop/prod'
-              fileType: 'json'
-              targetFiles: '**/environment*.js'
+              azureSubscription: 'SocialMediaDetoxConnection'
+              Action: 'Stop Azure App Service'
+              WebAppName: 'smd-web-prod'
 
           - task: AzureWebApp@1
             displayName: 'Deploy to Production App Service'
             inputs:
-              azureSubscription: 'Your-Azure-Subscription-Connection'
+              azureSubscription: 'SocialMediaDetoxConnection'
               appName: 'smd-web-prod'
               package: '$(Pipeline.Workspace)/drop/prod/**'
               appType: 'webApp'
+
+          - task: AzureAppServiceManage@0
+            displayName: 'Start Production App Service'
+            inputs:
+              azureSubscription: 'SocialMediaDetoxConnection'
+              Action: 'Start Azure App Service'
+              WebAppName: 'smd-web-prod'
