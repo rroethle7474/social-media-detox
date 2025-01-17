@@ -24,8 +24,8 @@ stages:
     - task: Cache@2
       inputs:
         key: 'npm | "$(Agent.OS)" | package-lock.json'
-        path: '$(npm_config_cache)'
-      displayName: 'Cache npm packages'
+        path: '$(Pipeline.Workspace)/.npm'
+        displayName: 'Cache npm packages'
 
     - task: Npm@1
       displayName: 'npm install'
