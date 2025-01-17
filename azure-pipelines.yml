@@ -32,6 +32,13 @@ stages:
       inputs:
         command: 'install'
 
+    # Clean dist directory before build
+    - task: DeleteFiles@1
+      displayName: 'Clean dist directory'
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)/dist'
+        Contents: '**/*'
+
     # Replace version token in environment files
     - task: PowerShell@2
       inputs:
