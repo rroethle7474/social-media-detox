@@ -111,7 +111,7 @@ stages:
   dependsOn: Build
   condition: succeeded()
   variables:
-  - group: smd-test-variables
+  - group: SMD-Test-Variables
   jobs:
   - deployment: Deploy
     displayName: Deploy to Test
@@ -149,7 +149,7 @@ stages:
   dependsOn: DeployTest
   condition: succeeded()
   variables:
-  - group: smd-prod-variables
+  - group: SMD-Prod-Variables
   jobs:
   - deployment: Deploy
     displayName: Deploy to Production
