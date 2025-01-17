@@ -63,8 +63,8 @@ stages:
         actionOnMissing: 'warn'
         keepToken: false
         tokens: |
-          TEST_API_URL=$(TEST_API_URL)
-          TEST_SIGNALR_URL=$(TEST_SIGNALR_URL)
+          API_URL=$(API_URL)
+          SIGNALR_URL=$(SIGNALR_URL)
 
     - task: CopyFiles@2
       displayName: 'Copy Test Files to Artifact Staging'
@@ -90,8 +90,8 @@ stages:
         actionOnMissing: 'warn'
         keepToken: false
         tokens: |
-          PROD_API_URL=$(PROD_API_URL)
-          PROD_SIGNALR_URL=$(PROD_SIGNALR_URL)
+          API_URL=$(API_URL)
+          SIGNALR_URL=$(SIGNALR_URL)
 
     - task: CopyFiles@2
       displayName: 'Copy Production Files to Artifact Staging'
