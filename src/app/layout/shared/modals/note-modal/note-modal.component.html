@@ -1,0 +1,60 @@
+<div class="modal-header">
+  <h4 class="modal-title">Notes for "{{ searchResult.title }}"</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="close()"></button>
+</div>
+<div class="modal-body">
+  <div class="mb-4">
+    <h5>Add New Note</h5>
+    <div class="mb-3">
+      <input
+        type="text"
+        class="form-control mb-2"
+        [(ngModel)]="newNote.title"
+        placeholder="Note Title"
+        [maxlength]="titleMaxLength"
+        (focus)="onTitleFocus()"
+      >
+      <small class="text-muted">{{ newNote.title.length }}/{{ titleMaxLength }}</small>
+      <div *ngIf="titleTouched && !newNote.title.trim()" class="text-danger mt-1">
+        Title is required to add a note
+      </div>
+    </div>
+    <div class="mb-3">
+      <textarea
+        class="form-control mb-2"
+        [(ngModel)]="newNote.message"
+        placeholder="Note Message"
+        rows="3"
+        [maxlength]="messageMaxLength"
+        (focus)="onMessageFocus()"
+      ></textarea>
+      <small class="text-muted">{{ newNote.message.length }}/{{ messageMaxLength }}</small>
+      <div *ngIf="messageTouched && !newNote.message.trim()" class="text-danger mt-1">
+        Message is required to add a note
+      </div>
+    </div>
+    <button
+      class="btn btn-primary"
+      (click)="addNote()"
+      [disabled]="!newNote.title.trim() || !newNote.message.trim()"
+    >Add Note</button>
+  </div>
+
+  <h5>Existing Notes</h5>
+  <div *ngFor="let note of notes" class="card mb-3">
+    <div class="card-body">
+      <div *ngIf="editingNote?.id !== note.id">
+        <h6 class="card-title">{{ note.title }}</h6>
+        <p class="card-text">{{ note.message }}</p>
+        <button class="btn btn-sm btn-outline-primary me-2" (click)="startEditing(note)">Edit</button>
+        <button class="btn btn-sm btn-outline-danger" (click)="deleteNote(note)">Delete</button>
+      </div>
+      <div *ngIf="editingNote?.id === note.id">
+        <input type="text" class="form-control mb-2" [ngModel]="editingNote!.title" (ngModelChange)="editingNote!.title = $event">
+        <textarea class="form-control mb-2" [ngModel]="editingNote!.message" (ngModelChange)="editingNote!.message = $event" rows="3"></textarea>
+        <button class="btn btn-sm btn-primary me-2" (click)="saveEdit()">Save</button>
+        <button class="btn btn-sm btn-secondary" (click)="cancelEdit()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>

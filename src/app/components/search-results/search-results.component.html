@@ -1,0 +1,129 @@
+<div class="container mt-4">
+  <h2 class="mb-4">MVP Search Results</h2>
+
+  <!-- Tabs -->
+  <ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="activeTab === 'youtube'" (click)="setActiveTab('youtube')">YouTube</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="activeTab === 'twitter'" (click)="setActiveTab('twitter')">Twitter</a>
+    </li>
+  </ul>
+
+  <!-- YouTube Content -->
+  <div
+    *ngIf="activeTab === 'youtube'"
+    infiniteScroll
+    [infiniteScrollDistance]="2"
+    [infiniteScrollThrottle]="50"
+    (scrolled)="onScroll('youtube')"
+  >
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      <ng-container *ngIf="displayedArticles['youtube'].length > 0; else noYoutubeResults">
+        <div *ngFor="let article of displayedArticles['youtube']" class="col">
+          <div class="card h-100">
+            <div class="card-img-top" (click)="openVideoModal(article)" [class.clickable]="true">
+              <img [src]="article.thumbnailUrl"
+                   [alt]="article.title"
+                   (error)="setDefaultImage($event)"
+                   class="img-fluid">
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">{{ article.title }}</h5>
+              <p class="card-text">{{ article.description }}</p>
+              <span *ngIf="article.notes && article.notes.length > 0" class="badge bg-info">{{ article.notes.length }} Note(s)</span>
+            </div>
+            <div class="card-footer">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" [id]="'topResult' + article.id"
+                       [checked]="article.topSearchResult"
+                       (change)="toggleTopResult(article)">
+                <label class="form-check-label" [for]="'topResult' + article.id">
+                  Top Result
+                </label>
+              </div>
+              <button class="btn btn-primary mt-2" (click)="openNoteModal(article)">View Notes</button>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+      <ng-template #noYoutubeResults>
+        <div class="col-12">
+          <app-no-results
+            message="No YouTube videos found in MVP results"
+            suggestion="Try adding more videos to your top results or create notes for videos">
+          </app-no-results>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+  <!-- Twitter Content -->
+  <div
+    *ngIf="activeTab === 'twitter'"
+    infiniteScroll
+    [infiniteScrollDistance]="2"
+    [infiniteScrollThrottle]="50"
+    (scrolled)="onScroll('twitter')"
+  >
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+      <ng-container *ngIf="displayedArticles['twitter'].length > 0; else noTwitterResults">
+        <div *ngFor="let article of displayedArticles['twitter']" class="col">
+          <div class="card h-100">
+            <div class="card-body">
+              <div *ngIf="article?.embeddedHtml; else loadingTweet" [innerHTML]="article.embeddedHtml"></div>
+              <ng-template #loadingTweet>
+                <div class="tweet-placeholder">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                  <p>Loading tweet...</p>
+                </div>
+              </ng-template>
+              <span *ngIf="article.notes && article.notes.length > 0" class="badge bg-info">{{ article.notes.length }} Note(s)</span>
+            </div>
+            <div class="card-footer">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" [id]="'topResult' + article.id" [(ngModel)]="article.topSearchResult" (change)="toggleTopResult(article)">
+                <label class="form-check-label" [for]="'topResult' + article.id">
+                  Top Result
+                </label>
+              </div>
+              <button class="btn btn-primary mt-2" (click)="openNoteModal(article)">View Notes</button>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+      <ng-template #noTwitterResults>
+        <div class="col-12">
+          <app-no-results
+            message="No tweets found in MVP results"
+            suggestion="Try adding more tweets to your top results or create notes for tweets">
+          </app-no-results>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center mt-3">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+</div>
+
+<!-- Video Modal -->
+<div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="videoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="videoModalLabel">{{ selectedArticle?.title }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="closeVideoModal()"></button>
+      </div>
+      <div class="modal-body">
+        <youtube-player *ngIf="selectedArticle?.videoId" [videoId]="selectedArticle?.videoId" [height]="400" [width]="800"></youtube-player>
+      </div>
+    </div>
+  </div>
+</div>

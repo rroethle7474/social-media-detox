@@ -1,0 +1,37 @@
+<div class="container mt-5">
+  <h2>Change Email</h2>
+  <form [formGroup]="changeEmailForm" (ngSubmit)="onChangeEmail()" *ngIf="currentUser">
+    <div class="mb-3">
+      <label for="currentEmail" class="form-label">Current Email</label>
+      <input type="email" class="form-control" id="currentEmail" [value]="currentUser.email" readonly>
+    </div>
+    <div class="mb-3">
+      <label for="newEmail" class="form-label">New Email</label>
+      <input type="email" class="form-control" id="newEmail" formControlName="newEmail" required>
+      <div *ngIf="changeEmailForm.get('newEmail')?.touched && changeEmailForm.get('newEmail')?.errors?.['required']" class="text-danger">
+        New email is required
+      </div>
+      <div *ngIf="changeEmailForm.get('newEmail')?.touched && changeEmailForm.get('newEmail')?.errors?.['invalidEmail']" class="text-danger">
+        Please enter a valid email address
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="confirmEmail" class="form-label">Confirm Email</label>
+      <input type="email" class="form-control" id="confirmEmail" formControlName="confirmEmail" required>
+      <div *ngIf="changeEmailForm.get('confirmEmail')?.touched && changeEmailForm.get('confirmEmail')?.errors?.['required']" class="text-danger">
+        Confirm email is required
+      </div>
+      <div *ngIf="changeEmailForm.get('confirmEmail')?.touched && changeEmailForm.get('confirmEmail')?.errors?.['invalidEmail']" class="text-danger">
+        Please enter a valid email address
+      </div>
+    </div>
+    <div *ngIf="changeEmailForm.errors?.['mismatch'] && changeEmailForm.get('newEmail')?.touched && changeEmailForm.get('confirmEmail')?.touched" class="text-danger mb-3">
+      Email addresses do not match
+    </div>
+    <button type="submit" class="btn btn-primary" [disabled]="changeEmailForm.invalid">Change Email</button>
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
+  </form>
+  <div *ngIf="!currentUser" class="alert alert-warning">
+    Please log in to change your email.
+  </div>
+</div>

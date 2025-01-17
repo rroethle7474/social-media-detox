@@ -1,0 +1,25 @@
+<div class="modal-header">
+  <h4 class="modal-title">Create an Account</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="close()"></button>
+</div>
+<div class="modal-body">
+  <form (ngSubmit)="onRegister()">
+    <div class="mb-3">
+      <input type="email" class="form-control" placeholder="Email" [(ngModel)]="registerData.email" name="email" required>
+    </div>
+    <div class="mb-3">
+      <input type="text" class="form-control" placeholder="First Name" [(ngModel)]="registerData.firstName" name="firstName" required>
+    </div>
+    <div class="mb-3">
+      <input type="text" class="form-control" placeholder="Last Name" [(ngModel)]="registerData.lastName" name="lastName" required>
+    </div>
+    <div class="mb-3">
+      <input type="password" class="form-control" placeholder="Password" [(ngModel)]="registerData.password" name="password" required>
+    </div>
+    <div class="mb-3">
+      <input type="password" class="form-control" placeholder="Confirm password" [(ngModel)]="confirmPassword" name="confirmPassword" required>
+    </div>
+    <button type="submit" class="btn btn-primary w-100">Agree and Register</button>
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
+  </form>
+</div>

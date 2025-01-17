@@ -1,0 +1,29 @@
+<section class="hero-section">
+  <div class="container">
+    <ng-container *ngIf="!isLoggedIn">
+      <h1 class="hero-title">Welcome to Social Media Detox</h1>
+      <p class="hero-subtitle">
+        Take a break from social media and improve your mental health with our guided detox journey.
+      </p>
+      <div class="btn-group">
+        <button class="btn btn-primary" (click)="openRegisterModal()">Start Your Detox</button>
+        <button class="btn btn-outline" (click)="navigateToLearnMore()">Learn More</button>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="isLoggedIn">
+      <div class="daily-inspiration">
+        <div class="quote-container">
+          <h1 class="hero-title">Daily Inspiration</h1>
+          <p class="hero-subtitle quote-text">
+            {{ dailyQuote }}
+          </p>
+        </div>
+        <div class="image-container" *ngIf="dailyImageUrl">
+          <img [src]="dailyImageUrl" alt="Daily inspiration" class="daily-image">
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</section>
+<app-article-grid></app-article-grid>

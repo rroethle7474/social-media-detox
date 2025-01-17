@@ -1,0 +1,101 @@
+<div class="container mt-4">
+  <div class="card smd-card">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h2 class="mb-0">Topics</h2>
+      <button
+        class="btn btn-dark smd-btn-sm"
+        (click)="navigateToAddTopic()"
+      >
+        + Add Topic
+      </button>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table smd-table smd-table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>Term</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let topic of topics">
+              <td>
+                <ng-container *ngIf="editingTopic?.id !== topic.id; else editMode">
+                  {{ topic.term }}
+                </ng-container>
+                <ng-template #editMode>
+                  <form (ngSubmit)="handleSaveEdit()" #editForm="ngForm">
+                    <input
+                      type="text"
+                      class="form-control smd-form-control"
+                      [(ngModel)]="editedTerm"
+                      name="editedTerm"
+                      required
+                    />
+                  </form>
+                </ng-template>
+              </td>
+              <td>
+                <ng-container *ngIf="editingTopic?.id !== topic.id; else editStatusMode">
+                  <span class="badge" [ngClass]="{'bg-success': topic.isActive, 'bg-secondary': !topic.isActive}">
+                    {{ topic.isActive ? 'Active' : 'Inactive' }}
+                  </span>
+                </ng-container>
+                <ng-template #editStatusMode>
+                  <div class="form-check">
+                    <input
+                      type="checkbox"
+                      class="form-check-input"
+                      [(ngModel)]="editedIsActive"
+                      id="editStatus{{topic.id}}"
+                    />
+                    <label class="form-check-label" for="editStatus{{topic.id}}">
+                      Active
+                    </label>
+                  </div>
+                </ng-template>
+              </td>
+              <td>
+                <ng-container *ngIf="editingTopic?.id !== topic.id; else saveCancel">
+                  <div class="d-flex flex-column flex-sm-row smd-table-actions">
+                    <button
+                      class="btn btn-sm btn-outline-primary smd-btn-sm"
+                      (click)="handleEditTopic(topic)"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      class="btn btn-sm btn-outline-danger smd-btn-sm"
+                      (click)="handleDeleteTopic(topic.id)"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </ng-container>
+                <ng-template #saveCancel>
+                  <div class="d-flex flex-column flex-sm-row smd-table-actions">
+                    <button
+                      class="btn btn-sm btn-success smd-btn-sm"
+                      (click)="handleSaveEdit()"
+                      [disabled]="!editedTerm.trim()"
+                    >
+                      Save
+                    </button>
+                    <button
+                      class="btn btn-sm btn-secondary smd-btn-sm"
+                      (click)="cancelEdit()"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </ng-template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,99 @@
+<div class="container mt-4">
+  <div class="card smd-card">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h2 class="mb-0">Content Types</h2>
+      <button
+        class="btn btn-dark smd-btn-sm"
+        (click)="navigateToAddContentType()"
+      >
+        + Add Content Type
+      </button>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table smd-table smd-table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let contentType of contentTypes">
+              <td>{{ contentType.id }}</td>
+              <td>
+                <ng-container *ngIf="editingContentType?.id !== contentType.id; else editMode">
+                  {{ contentType.title }}
+                </ng-container>
+                <ng-template #editMode>
+                  <form (ngSubmit)="handleSaveEdit()" #editForm="ngForm">
+                    <input
+                      type="text"
+                      class="form-control smd-form-control"
+                      [(ngModel)]="editedTitle"
+                      name="editedTitle"
+                      required
+                      [maxlength]="titleMaxLength"
+                    />
+                  </form>
+                </ng-template>
+              </td>
+              <td>
+                <ng-container *ngIf="editingContentType?.id !== contentType.id; else editDescriptionMode">
+                  {{ contentType.description }}
+                </ng-container>
+                <ng-template #editDescriptionMode>
+                  <textarea
+                    class="form-control smd-form-control"
+                    [(ngModel)]="editedDescription"
+                    name="editedDescription"
+                    required
+                    [maxlength]="descriptionMaxLength"
+                    rows="3"
+                  ></textarea>
+                </ng-template>
+              </td>
+              <td>
+                <ng-container *ngIf="editingContentType?.id !== contentType.id; else saveCancel">
+                  <div class="d-flex flex-column flex-sm-row smd-table-actions">
+                    <button
+                      class="btn btn-sm btn-outline-primary smd-btn-sm"
+                      (click)="handleEditContentType(contentType)"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      class="btn btn-sm btn-outline-danger smd-btn-sm"
+                      (click)="handleDeleteContentType(contentType.id)"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </ng-container>
+                <ng-template #saveCancel>
+                  <div class="d-flex flex-column flex-sm-row smd-table-actions">
+                    <button
+                      class="btn btn-sm btn-success smd-btn-sm"
+                      (click)="handleSaveEdit()"
+                      [disabled]="!editedTitle.trim() || !editedDescription.trim()"
+                    >
+                      Save
+                    </button>
+                    <button
+                      class="btn btn-sm btn-secondary smd-btn-sm"
+                      (click)="cancelEdit()"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </ng-template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

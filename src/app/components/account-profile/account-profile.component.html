@@ -1,0 +1,39 @@
+<div class="container mt-5">
+  <h2>Account Profile</h2>
+  <div *ngIf="currentUser">
+    <form (ngSubmit)="updateProfile()">
+      <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-control" [value]="currentUser.email" readonly>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">First Name</label>
+        <input type="text" class="form-control" [(ngModel)]="currentUser.firstName" name="firstName">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Last Name</label>
+        <input type="text" class="form-control" [(ngModel)]="currentUser.lastName" name="lastName">
+      </div>
+      <button type="submit" class="btn btn-primary">Update Profile</button>
+    </form>
+    <!-- Add if statement to check if currentUser is an admin -->
+    <div *ngIf="currentUser.isAdmin">
+      <form (ngSubmit)="onSubmit()">
+        <div class="mb-3 form-check">
+          <input type="checkbox" class="form-check-input" id="adminCheck"
+                 [(ngModel)]="isAdmin"
+                 name="isAdmin"
+                 [disabled]="!currentUser.isAdmin">
+          <label class="form-check-label" for="adminCheck">Admin</label>
+        </div>
+        <button type="submit" class="btn btn-primary" [disabled]="!currentUser.isAdmin">Update Admin Status</button>
+      </form>
+    </div>
+    <div class="mt-4">
+      <button class="btn btn-danger" (click)="deleteAccount()">Delete Account</button>
+    </div>
+  </div>
+  <div *ngIf="!currentUser">
+    <p>Please log in to view your account profile.</p>
+  </div>
+</div>

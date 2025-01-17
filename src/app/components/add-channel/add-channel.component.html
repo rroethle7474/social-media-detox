@@ -1,0 +1,113 @@
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12 col-lg-6">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h2 class="mb-0">Add New Channel</h2>
+        </div>
+        <form (ngSubmit)="handleAddChannel()" #channelForm="ngForm">
+          <div class="card-body">
+            <div class="mb-3">
+              <label for="channelName" class="form-label">Channel Name</label>
+              <input
+                id="channelName"
+                type="text"
+                class="form-control"
+                placeholder="Enter channel name..."
+                [(ngModel)]="newChannel.channelName"
+                name="channelName"
+                required
+                [maxlength]="channelNameMaxLength"
+                (focus)="onChannelNameFocus()"
+              />
+              <small class="text-muted">{{ newChannel.channelName.length }}/{{ channelNameMaxLength }}</small>
+              <div *ngIf="channelNameTouched && !newChannel.channelName.trim()" class="text-danger mt-1">
+                Channel Name is required
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="identifier" class="form-label">Identifier</label>
+              <input
+                id="identifier"
+                type="text"
+                class="form-control"
+                placeholder="Enter identifier..."
+                [(ngModel)]="newChannel.identifier"
+                name="identifier"
+                required
+                [maxlength]="identifierMaxLength"
+                (focus)="onIdentifierFocus()"
+              />
+              <small class="text-muted">{{ newChannel.identifier.length }}/{{ identifierMaxLength }}</small>
+              <div *ngIf="identifierTouched && !newChannel.identifier.trim()" class="text-danger mt-1">
+                Identifier is required
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="description" class="form-label">Description</label>
+              <textarea
+                id="description"
+                class="form-control"
+                placeholder="Enter description..."
+                [(ngModel)]="newChannel.description"
+                name="description"
+                required
+                [maxlength]="descriptionMaxLength"
+                (focus)="onDescriptionFocus()"
+              ></textarea>
+              <small class="text-muted">{{ newChannel.description.length }}/{{ descriptionMaxLength }}</small>
+              <div *ngIf="descriptionTouched && !newChannel.description.trim()" class="text-danger mt-1">
+                Description is required
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="contentType" class="form-label">Content Type</label>
+              <select
+                id="contentType"
+                class="form-select"
+                [(ngModel)]="newChannel.contentTypeId"
+                name="contentType"
+                required
+                (focus)="onContentTypeFocus()"
+              >
+                <option [ngValue]="0" disabled>Select a content type</option>
+                <option *ngFor="let contentType of contentTypes" [ngValue]="contentType.id">{{ contentType.title }}</option>
+              </select>
+              <div *ngIf="contentTypeTouched && newChannel.contentTypeId === 0" class="text-danger mt-1">
+                Content Type is required
+              </div>
+            </div>
+            <div class="mb-3">
+              <div class="form-check">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  id="isActive"
+                  [(ngModel)]="newChannel.isActive"
+                  name="isActive"
+                />
+                <label class="form-check-label" for="isActive">Is Active</label>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer d-flex justify-content-between">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="!newChannel.channelName.trim() || !newChannel.identifier.trim() || !newChannel.description.trim() || newChannel.contentTypeId === 0"
+            >
+              Add Channel
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="goBack()"
+            >
+              Back
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,78 @@
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12 col-lg-6">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h2 class="mb-0">Add New Sub-Topic</h2>
+        </div>
+        <form (ngSubmit)="handleAddSubTopic()" #subTopicForm="ngForm">
+          <div class="card-body">
+            <div class="mb-3">
+              <label for="term" class="form-label">Term</label>
+              <input
+                id="term"
+                type="text"
+                class="form-control"
+                placeholder="Enter new sub-topic..."
+                [(ngModel)]="newSubTopic"
+                name="term"
+                required
+                [maxlength]="termMaxLength"
+                (focus)="onTermFocus()"
+              />
+              <small class="text-muted">{{ newSubTopic.length }}/{{ termMaxLength }}</small>
+              <div *ngIf="termTouched && !newSubTopic.trim()" class="text-danger mt-1">
+                Term is required to add a sub-topic
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="topic" class="form-label">Topic</label>
+              <select
+                id="topic"
+                class="form-select"
+                [(ngModel)]="selectedTopicId"
+                name="topic"
+                required
+                (focus)="onTopicFocus()"
+              >
+                <option [ngValue]="null" disabled>Select a topic</option>
+                <option *ngFor="let topic of topics" [ngValue]="topic.id">{{ topic.term }}</option>
+              </select>
+              <div *ngIf="topicTouched && !selectedTopicId" class="text-danger mt-1">
+                Topic is required to add a sub-topic
+              </div>
+            </div>
+            <div class="mb-3">
+              <div class="form-check">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  id="isActive"
+                  [(ngModel)]="isActive"
+                  name="isActive"
+                />
+                <label class="form-check-label" for="isActive">Is Active</label>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer d-flex justify-content-between">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="!newSubTopic.trim() || !selectedTopicId"
+            >
+              Add Sub-Topic
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="goBack()"
+            >
+              Back
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

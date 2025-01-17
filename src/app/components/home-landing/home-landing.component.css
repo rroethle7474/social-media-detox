@@ -1,0 +1,157 @@
+.hero-section {
+  background-image: linear-gradient(to bottom, rgb(239, 246, 255), rgb(255, 255, 255));
+  padding: 4rem 0;
+  text-align: center;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+  color: #000;
+  line-height: 1.1;
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  color: #666;
+  margin: 0 auto 2rem;
+  line-height: 1.5;
+  max-width: 600px;
+}
+
+/* Daily Inspiration Styles */
+.daily-inspiration {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.quote-container {
+  max-width: 800px;
+}
+
+.quote-text {
+  font-style: italic;
+  font-size: 1.5rem;
+  line-height: 1.6;
+  color: #2c3e50;
+  margin: 1rem 0;
+}
+
+.image-container {
+  width: 100%;
+  max-width: 600px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.image-container:hover {
+  transform: translateY(-5px);
+}
+
+.daily-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Button Styles */
+.btn-group {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.btn {
+  flex: 1;
+  max-width: 280px;
+  padding: 0.875rem 2rem;
+  font-size: 1rem;
+  border-radius: 100px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: #000;
+  border: none;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #333;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1px solid #000;
+  color: #000;
+}
+
+.btn-outline:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Responsive Design */
+@media (min-width: 768px) {
+  .daily-inspiration {
+    flex-direction: row;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .quote-container {
+    flex: 1;
+    padding-right: 2rem;
+  }
+
+  .image-container {
+    flex: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 2rem 0;
+  }
+
+  .hero-title {
+    font-size: 2.25rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.1rem;
+    padding: 0 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .quote-text {
+    font-size: 1.25rem;
+  }
+
+  .btn-group {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .btn {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .image-container {
+    margin: 1rem auto;
+  }
+}

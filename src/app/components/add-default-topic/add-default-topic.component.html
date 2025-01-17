@@ -1,0 +1,49 @@
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12 col-lg-6">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h2 class="mb-0">Add New Default Topic</h2>
+        </div>
+        <form (ngSubmit)="handleAddDefaultTopic()" #defaultTopicForm="ngForm">
+          <div class="card-body">
+            <div class="mb-3">
+              <label for="term" class="form-label">Term</label>
+              <input
+                id="term"
+                type="text"
+                class="form-control"
+                placeholder="Enter default topic term..."
+                [(ngModel)]="newTerm"
+                name="term"
+                required
+                [maxlength]="termMaxLength"
+                (focus)="onTermFocus()"
+              />
+              <small class="text-muted">{{ newTerm.length }}/{{ termMaxLength }}</small>
+              <div *ngIf="termTouched && !newTerm.trim()" class="text-danger mt-1">
+                Term is required to add a default topic
+              </div>
+            </div>
+          </div>
+          <div class="card-footer d-flex justify-content-between">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="!newTerm.trim()"
+            >
+              Add Default Topic
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="goBack()"
+            >
+              Back
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

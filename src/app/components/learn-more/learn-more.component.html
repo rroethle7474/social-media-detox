@@ -1,0 +1,28 @@
+<div class="learn-more-container">
+  <div *ngIf="isLoading" class="loading-spinner">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <ng-container *ngIf="!isLoading">
+    <div class="introduction-section">
+      <h1>Understanding Social Media's Impact</h1>
+      <div class="introduction-card">
+        <p>{{ introduction }}</p>
+      </div>
+    </div>
+
+    <div class="items-section">
+      <div class="items-list">
+        <div *ngFor="let item of items" class="item-card">
+          <div class="bullet-point"></div>
+          <div class="item-content">
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.content }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

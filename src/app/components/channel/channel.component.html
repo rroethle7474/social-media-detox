@@ -1,0 +1,155 @@
+<div class="container mt-4">
+  <div class="card smd-card">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h2 class="mb-0">Channels</h2>
+      <button
+        class="btn btn-dark smd-btn-sm"
+        (click)="navigateToAddChannel()"
+      >
+        + Add Channel
+      </button>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table smd-table smd-table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>Channel Name</th>
+              <th>Identifier</th>
+              <th>Description</th>
+              <th>Content Type</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let channel of channels">
+              <td>
+                <ng-container *ngIf="editingChannel?.id !== channel.id; else editChannelNameMode">
+                  {{ channel.channelName }}
+                </ng-container>
+                <ng-template #editChannelNameMode>
+                  <form (ngSubmit)="handleSaveEdit()" #editForm="ngForm">
+                    <input
+                      type="text"
+                      class="form-control smd-form-control"
+                      [(ngModel)]="editedChannelName"
+                      name="editedChannelName"
+                      required
+                      [maxlength]="channelNameMaxLength"
+                    />
+                    <small class="text-muted">{{ editedChannelName.length }}/{{ channelNameMaxLength }}</small>
+                  </form>
+                </ng-template>
+              </td>
+              <td>
+                <ng-container *ngIf="editingChannel?.id !== channel.id; else editIdentifierMode">
+                  {{ channel.identifier }}
+                </ng-container>
+                <ng-template #editIdentifierMode>
+                  <input
+                    type="text"
+                    class="form-control smd-form-control"
+                    [(ngModel)]="editedIdentifier"
+                    name="editedIdentifier"
+                    required
+                    [maxlength]="identifierMaxLength"
+                  />
+                  <small class="text-muted">{{ editedIdentifier.length }}/{{ identifierMaxLength }}</small>
+                </ng-template>
+              </td>
+              <td>
+                <ng-container *ngIf="editingChannel?.id !== channel.id; else editDescriptionMode">
+                  {{ channel.description }}
+                </ng-container>
+                <ng-template #editDescriptionMode>
+                  <textarea
+                    class="form-control smd-form-control"
+                    [(ngModel)]="editedDescription"
+                    name="editedDescription"
+                    required
+                    [maxlength]="descriptionMaxLength"
+                  ></textarea>
+                  <small class="text-muted">{{ editedDescription.length }}/{{ descriptionMaxLength }}</small>
+                </ng-template>
+              </td>
+              <td>
+                <ng-container *ngIf="editingChannel?.id !== channel.id; else editContentTypeMode">
+                  {{ channel.contentTypeName }}
+                </ng-container>
+                <ng-template #editContentTypeMode>
+                  <select
+                    class="form-select smd-form-control"
+                    [(ngModel)]="editedContentTypeId"
+                    name="editedContentTypeId"
+                    required
+                  >
+                    <option [ngValue]="null" disabled>Select a content type</option>
+                    <option *ngFor="let contentType of contentTypes" [ngValue]="contentType.id">
+                      {{ contentType.title }}
+                    </option>
+                  </select>
+                </ng-template>
+              </td>
+              <td>
+                <ng-container *ngIf="editingChannel?.id !== channel.id; else editStatusMode">
+                  <span class="badge" [ngClass]="{'bg-success': channel.isActive, 'bg-secondary': !channel.isActive}">
+                    {{ channel.isActive ? 'Active' : 'Inactive' }}
+                  </span>
+                </ng-container>
+                <ng-template #editStatusMode>
+                  <div class="form-check">
+                    <input
+                      type="checkbox"
+                      class="form-check-input"
+                      [(ngModel)]="editedIsActive"
+                      id="editStatus{{channel.id}}"
+                    />
+                    <label class="form-check-label" for="editStatus{{channel.id}}">
+                      Active
+                    </label>
+                  </div>
+                </ng-template>
+              </td>
+              <td>
+                <ng-container *ngIf="editingChannel?.id !== channel.id; else saveCancel">
+                  <div class="d-flex flex-column flex-sm-row smd-table-actions">
+                    <button
+                      class="btn btn-sm btn-outline-primary smd-btn-sm"
+                      (click)="handleEditChannel(channel)"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      class="btn btn-sm btn-outline-danger smd-btn-sm"
+                      (click)="handleDeleteChannel(channel.id)"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </ng-container>
+                <ng-template #saveCancel>
+                  <div class="d-flex flex-column flex-sm-row smd-table-actions">
+                    <button
+                      class="btn btn-sm btn-success smd-btn-sm"
+                      (click)="handleSaveEdit()"
+                      [disabled]="!editedChannelName.trim() || !editedIdentifier.trim() || !editedDescription.trim() || !editedContentTypeId"
+                    >
+                      Save
+                    </button>
+                    <button
+                      class="btn btn-sm btn-secondary smd-btn-sm"
+                      (click)="cancelEdit()"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </ng-template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
