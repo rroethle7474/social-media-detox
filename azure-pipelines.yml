@@ -83,7 +83,8 @@ stages:
     - task: CopyFiles@2
       displayName: 'Copy Test Files to Artifact Staging'
       inputs:
-        Contents: 'dist/social-media-detox/browser/**'
+        SourceFolder: 'dist/social-media-detox/browser'
+        Contents: '**/*'
         TargetFolder: '$(Build.ArtifactStagingDirectory)/test'
 
     # Build Production Version
@@ -110,7 +111,8 @@ stages:
     - task: CopyFiles@2
       displayName: 'Copy Production Files to Artifact Staging'
       inputs:
-        Contents: 'dist/social-media-detox/browser/**'
+        SourceFolder: 'dist/social-media-detox/browser'
+        Contents: '**/*'
         TargetFolder: '$(Build.ArtifactStagingDirectory)/prod'
 
     - task: PublishBuildArtifacts@1
