@@ -21,11 +21,18 @@ stages:
         versionSpec: '20.x'
       displayName: 'Install Node.js'
 
+    - task: PowerShell@2
+      displayName: 'Create npm cache directory'
+      inputs:
+        targetType: 'inline'
+        script: |
+          New-Item -ItemType Directory -Force -Path "$(Pipeline.Workspace)/.npm"
+
     - task: Cache@2
       inputs:
         key: 'npm | "$(Agent.OS)" | package-lock.json'
         path: '$(Pipeline.Workspace)/.npm'
-        displayName: 'Cache npm packages'
+      displayName: 'Cache npm packages'
 
     - task: Npm@1
       displayName: 'npm install'
