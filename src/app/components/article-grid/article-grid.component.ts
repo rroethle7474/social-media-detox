@@ -29,7 +29,7 @@ import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
   selector: 'app-article-grid',
   templateUrl: './article-grid.component.html',
   standalone: true,
-  imports: [CommonModule, FormsModule, YouTubePlayer, SafeHtmlPipe, NoResultsComponent, InfiniteScrollDirective],
+  imports: [CommonModule, FormsModule, YouTubePlayer, NoResultsComponent, InfiniteScrollDirective],
   styleUrls: ['./article-grid.component.css']
 })
 export class ArticleGridComponent implements OnInit, OnDestroy {

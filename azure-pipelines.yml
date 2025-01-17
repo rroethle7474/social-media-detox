@@ -1,0 +1,169 @@
+trigger:
+  branches:
+    include:
+      - main
+
+variables:
+  vmImageName: 'windows-latest'
+  buildVersion: '1.0.$(Build.BuildId)'
+
+stages:
+- stage: Build
+  displayName: Build stage
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '20.x'
+      displayName: 'Install Node.js'
+
+    - task: Npm@1
+      displayName: 'npm install'
+      inputs:
+        command: 'install'
+
+    # Replace version token in environment files
+    - task: PowerShell@2
+      inputs:
+        targetType: 'inline'
+        script: |
+          (Get-Content "src/environments/environment.test.ts") |
+          ForEach-Object { $_ -replace "#{BUILD_VERSION}#", "$(buildVersion)" } |
+          Set-Content "src/environments/environment.test.ts"
+
+          (Get-Content "src/environments/environment.production.ts") |
+          ForEach-Object { $_ -replace "#{BUILD_VERSION}#", "$(buildVersion)" } |
+          Set-Content "src/environments/environment.production.ts"
+
+    # Build Test Version
+    - task: Npm@1
+      displayName: 'Build Test'
+      inputs:
+        command: 'custom'
+        customCommand: 'run build -- --configuration=test'
+
+    # Replace tokens in test build
+    - task: replacetokens@5
+      inputs:
+        targetFiles: '$(Build.SourcesDirectory)/dist/social-media-detox/browser/main*.js'
+        encoding: 'auto'
+        tokenPattern: 'default'
+        writeBOM: true
+        actionOnMissing: 'warn'
+        keepToken: false
+        actionOnNoFiles: 'continue'
+        enableTransforms: false
+        enableRecursion: false
+        useLegacyPattern: false
+        enableTelemetry: true
+        tokens: |
+          TEST_API_URL=$(TEST_API_URL)
+          TEST_SIGNALR_URL=$(TEST_SIGNALR_URL)
+
+    - task: CopyFiles@2
+      displayName: 'Copy Test Files to Artifact Staging'
+      inputs:
+        Contents: 'dist/social-media-detox/browser/**'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/test'
+
+    # Build Production Version
+    - task: Npm@1
+      displayName: 'Build Production'
+      inputs:
+        command: 'custom'
+        customCommand: 'run build -- --configuration=production'
+
+    # Replace tokens in production build
+    - task: replacetokens@5
+      inputs:
+        targetFiles: '$(Build.SourcesDirectory)/dist/social-media-detox/browser/main*.js'
+        encoding: 'auto'
+        tokenPattern: 'default'
+        writeBOM: true
+        actionOnMissing: 'warn'
+        keepToken: false
+        actionOnNoFiles: 'continue'
+        enableTransforms: false
+        enableRecursion: false
+        useLegacyPattern: false
+        enableTelemetry: true
+        tokens: |
+          PROD_API_URL=$(PROD_API_URL)
+          PROD_SIGNALR_URL=$(PROD_SIGNALR_URL)
+
+    - task: CopyFiles@2
+      displayName: 'Copy Production Files to Artifact Staging'
+      inputs:
+        Contents: 'dist/social-media-detox/browser/**'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/prod'
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifacts'
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
+
+- stage: DeployTest
+  displayName: Deploy to Test
+  dependsOn: Build
+  condition: succeeded()
+  variables:
+  - group: smd-test-variables
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy to Test
+    environment: 'test'
+    pool:
+      vmImage: $(vmImageName)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: FileTransform@1
+            inputs:
+              folderPath: '$(Pipeline.Workspace)/drop/test'
+              fileType: 'json'
+              targetFiles: '**/environment*.js'
+
+          - task: AzureWebApp@1
+            displayName: 'Deploy to Test App Service'
+            inputs:
+              azureSubscription: 'Your-Azure-Subscription-Connection'
+              appName: 'smd-web-test'
+              package: '$(Pipeline.Workspace)/drop/test/**'
+              appType: 'webApp'
+
+- stage: DeployProduction
+  displayName: Deploy to Production
+  dependsOn: DeployTest
+  condition: succeeded()
+  variables:
+  - group: smd-prod-variables
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy to Production
+    environment: 'production'
+    pool:
+      vmImage: $(vmImageName)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: FileTransform@1
+            inputs:
+              folderPath: '$(Pipeline.Workspace)/drop/prod'
+              fileType: 'json'
+              targetFiles: '**/environment*.js'
+
+          - task: AzureWebApp@1
+            displayName: 'Deploy to Production App Service'
+            inputs:
+              azureSubscription: 'Your-Azure-Subscription-Connection'
+              appName: 'smd-web-prod'
+              package: '$(Pipeline.Workspace)/drop/prod/**'
+              appType: 'webApp'

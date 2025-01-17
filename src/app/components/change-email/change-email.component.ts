@@ -9,7 +9,7 @@ import { EmailValidatorDirective } from '../../directives/email-validator.direct
 @Component({
   selector: 'app-change-email',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, EmailValidatorDirective],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './change-email.component.html',
   styleUrls: ['./change-email.component.css']
 })
