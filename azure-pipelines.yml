@@ -143,12 +143,22 @@ stages:
               Action: 'Stop Azure App Service'
               WebAppName: 'smd-web-test'
 
+          # Add Archive step
+          - task: ArchiveFiles@2
+            displayName: 'Archive Test Files'
+            inputs:
+              rootFolderOrFile: '$(Pipeline.Workspace)/drop/test'
+              includeRootFolder: false
+              archiveType: 'zip'
+              archiveFile: '$(Pipeline.Workspace)/drop/test.zip'
+              replaceExistingArchive: true
+
           - task: AzureWebApp@1
             displayName: 'Deploy to Test App Service'
             inputs:
               azureSubscription: 'SocialMediaDetoxConnection'
               appName: 'smd-web-test'
-              package: '$(Pipeline.Workspace)/drop/test/**'
+              package: '$(Pipeline.Workspace)/drop/test.zip'
               appType: 'webApp'
 
           - task: AzureAppServiceManage@0
@@ -181,12 +191,22 @@ stages:
               Action: 'Stop Azure App Service'
               WebAppName: 'smd-web-prod'
 
+          # Add Archive step
+          - task: ArchiveFiles@2
+            displayName: 'Archive Production Files'
+            inputs:
+              rootFolderOrFile: '$(Pipeline.Workspace)/drop/prod'
+              includeRootFolder: false
+              archiveType: 'zip'
+              archiveFile: '$(Pipeline.Workspace)/drop/prod.zip'
+              replaceExistingArchive: true
+
           - task: AzureWebApp@1
             displayName: 'Deploy to Production App Service'
             inputs:
               azureSubscription: 'SocialMediaDetoxConnection'
               appName: 'smd-web-prod'
-              package: '$(Pipeline.Workspace)/drop/prod/**'
+              package: '$(Pipeline.Workspace)/drop/prod.zip'
               appType: 'webApp'
 
           - task: AzureAppServiceManage@0
