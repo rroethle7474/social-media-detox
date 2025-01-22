@@ -10,14 +10,15 @@ variables:
 stages:
 - stage: Build
   displayName: Build stage
-  variables:
-  - group: SMD-Test-Variables  # Include Test variables here
-  - group: SMD-Prod-Variables  # Include Prod variables here
   jobs:
-  - job: Build
-    displayName: Build
+  - job: BuildTest
+    displayName: Build Test
     pool:
       vmImage: $(vmImageName)
+    variables:
+      - group: SMD-Test-Variables  # Test variables
+      - name: buildVersion
+        value: '1.0.$(Build.BuildId)'
     steps:
     - task: NodeTool@0
       inputs:
@@ -42,14 +43,13 @@ stages:
       inputs:
         command: 'install'
 
-    # Clean dist directory before build
     - task: DeleteFiles@1
       displayName: 'Clean dist directory'
       inputs:
         SourceFolder: '$(Build.SourcesDirectory)/dist'
         Contents: '**/*'
 
-    # Replace tokens in environment files using variables from groups
+    # Replace tokens in TEST environment file
     - task: replacetokens@5
       displayName: 'Replace Tokens in Test Environment'
       inputs:
@@ -61,9 +61,69 @@ stages:
         keepToken: false
         tokens: |
           BUILD_VERSION=$(buildVersion)
-          API_URL=$(API_URL)      # From SMD-Test-Variables
+          API_URL=$(API_URL)
           SIGNALR_URL=$(SIGNALR_URL)
 
+    # Build Test Version
+    - task: Npm@1
+      displayName: 'Build Test'
+      inputs:
+        command: 'custom'
+        customCommand: 'run build -- --configuration=test'
+
+    - task: CopyFiles@2
+      displayName: 'Copy Test Files to Artifact Staging'
+      inputs:
+        SourceFolder: 'dist/social-media-detox/browser'
+        Contents: '**/*'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/test'
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Test Artifacts'
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/test'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
+
+  - job: BuildProd
+    displayName: Build Production
+    pool:
+      vmImage: $(vmImageName)
+    variables:
+      - group: SMD-Prod-Variables  # Production variables
+      - name: buildVersion
+        value: '1.0.$(Build.BuildId)'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '20.x'
+      displayName: 'Install Node.js'
+
+    - task: PowerShell@2
+      displayName: 'Create npm cache directory'
+      inputs:
+        targetType: 'inline'
+        script: |
+          New-Item -ItemType Directory -Force -Path "$(Pipeline.Workspace)/.npm"
+
+    - task: Cache@2
+      inputs:
+        key: 'npm | "$(Agent.OS)" | package-lock.json'
+        path: '$(Pipeline.Workspace)/.npm'
+      displayName: 'Cache npm packages'
+
+    - task: Npm@1
+      displayName: 'npm install'
+      inputs:
+        command: 'install'
+
+    - task: DeleteFiles@1
+      displayName: 'Clean dist directory'
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)/dist'
+        Contents: '**/*'
+
+    # Replace tokens in PRODUCTION environment file
     - task: replacetokens@5
       displayName: 'Replace Tokens in Production Environment'
       inputs:
@@ -75,23 +135,8 @@ stages:
         keepToken: false
         tokens: |
           BUILD_VERSION=$(buildVersion)
-          API_URL=$(API_URL)      # From SMD-Prod-Variables
+          API_URL=$(API_URL)
           SIGNALR_URL=$(SIGNALR_URL)
-
-    # Build Test Version
-    - task: Npm@1
-      displayName: 'Build Test'
-      inputs:
-        command: 'custom'
-        customCommand: 'run build -- --configuration=test'
-      continueOnError: false
-
-    - task: CopyFiles@2
-      displayName: 'Copy Test Files to Artifact Staging'
-      inputs:
-        SourceFolder: 'dist/social-media-detox/browser'
-        Contents: '**/*'
-        TargetFolder: '$(Build.ArtifactStagingDirectory)/test'
 
     # Build Production Version
     - task: Npm@1
@@ -99,7 +144,6 @@ stages:
       inputs:
         command: 'custom'
         customCommand: 'run build -- --configuration=production'
-      continueOnError: false
 
     - task: CopyFiles@2
       displayName: 'Copy Production Files to Artifact Staging'
@@ -109,18 +153,18 @@ stages:
         TargetFolder: '$(Build.ArtifactStagingDirectory)/prod'
 
     - task: PublishBuildArtifacts@1
-      displayName: 'Publish Artifacts'
+      displayName: 'Publish Production Artifacts'
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/prod'
         ArtifactName: 'drop'
         publishLocation: 'Container'
 
 - stage: DeployTest
   displayName: Deploy to Test
-  dependsOn: Build
+  dependsOn: Build  # Waits for entire Build stage
   condition: succeeded()
   variables:
-  - group: SMD-Test-Variables
+    - group: SMD-Test-Variables
   jobs:
   - deployment: Deploy
     displayName: Deploy to Test
@@ -138,7 +182,6 @@ stages:
               Action: 'Stop Azure App Service'
               WebAppName: 'smd-web-test'
 
-          # Add Archive step
           - task: ArchiveFiles@2
             displayName: 'Archive Test Files'
             inputs:
@@ -165,10 +208,10 @@ stages:
 
 - stage: DeployProduction
   displayName: Deploy to Production
-  dependsOn: DeployTest
+  dependsOn: DeployTest  # Sequential deployment
   condition: succeeded()
   variables:
-  - group: SMD-Prod-Variables
+    - group: SMD-Prod-Variables
   jobs:
   - deployment: Deploy
     displayName: Deploy to Production
@@ -186,7 +229,6 @@ stages:
               Action: 'Stop Azure App Service'
               WebAppName: 'smd-web-prod'
 
-          # Add Archive step
           - task: ArchiveFiles@2
             displayName: 'Archive Production Files'
             inputs:
