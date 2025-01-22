@@ -10,6 +10,9 @@ variables:
 stages:
 - stage: Build
   displayName: Build stage
+  variables:
+  - group: SMD-Test-Variables  # Include Test variables here
+  - group: SMD-Prod-Variables  # Include Prod variables here
   jobs:
   - job: Build
     displayName: Build
@@ -46,18 +49,34 @@ stages:
         SourceFolder: '$(Build.SourcesDirectory)/dist'
         Contents: '**/*'
 
-    # Replace version token in environment files
-    - task: PowerShell@2
+    # Replace tokens in environment files using variables from groups
+    - task: replacetokens@5
+      displayName: 'Replace Tokens in Test Environment'
       inputs:
-        targetType: 'inline'
-        script: |
-          (Get-Content "src/environments/environment.test.ts") |
-          ForEach-Object { $_ -replace "#{BUILD_VERSION}#", "$(buildVersion)" } |
-          Set-Content "src/environments/environment.test.ts"
+        targetFiles: 'src/environments/environment.test.ts'
+        encoding: 'auto'
+        tokenPattern: 'default'
+        writeBOM: true
+        actionOnMissing: 'warn'
+        keepToken: false
+        tokens: |
+          BUILD_VERSION=$(buildVersion)
+          API_URL=$(API_URL)      # From SMD-Test-Variables
+          SIGNALR_URL=$(SIGNALR_URL)
 
-          (Get-Content "src/environments/environment.production.ts") |
-          ForEach-Object { $_ -replace "#{BUILD_VERSION}#", "$(buildVersion)" } |
-          Set-Content "src/environments/environment.production.ts"
+    - task: replacetokens@5
+      displayName: 'Replace Tokens in Production Environment'
+      inputs:
+        targetFiles: 'src/environments/environment.production.ts'
+        encoding: 'auto'
+        tokenPattern: 'default'
+        writeBOM: true
+        actionOnMissing: 'warn'
+        keepToken: false
+        tokens: |
+          BUILD_VERSION=$(buildVersion)
+          API_URL=$(API_URL)      # From SMD-Prod-Variables
+          SIGNALR_URL=$(SIGNALR_URL)
 
     # Build Test Version
     - task: Npm@1
@@ -66,19 +85,6 @@ stages:
         command: 'custom'
         customCommand: 'run build -- --configuration=test'
       continueOnError: false
-
-    # Replace tokens in test build
-    - task: replacetokens@5
-      inputs:
-        targetFiles: '$(Build.SourcesDirectory)/dist/social-media-detox/browser/main*.js'
-        encoding: 'auto'
-        tokenPattern: 'default'
-        writeBOM: true
-        actionOnMissing: 'warn'
-        keepToken: false
-        tokens: |
-          API_URL=$(API_URL)
-          SIGNALR_URL=$(SIGNALR_URL)
 
     - task: CopyFiles@2
       displayName: 'Copy Test Files to Artifact Staging'
@@ -94,19 +100,6 @@ stages:
         command: 'custom'
         customCommand: 'run build -- --configuration=production'
       continueOnError: false
-
-    # Replace tokens in production build
-    - task: replacetokens@5
-      inputs:
-        targetFiles: '$(Build.SourcesDirectory)/dist/social-media-detox/browser/main*.js'
-        encoding: 'auto'
-        tokenPattern: 'default'
-        writeBOM: true
-        actionOnMissing: 'warn'
-        keepToken: false
-        tokens: |
-          API_URL=$(API_URL)
-          SIGNALR_URL=$(SIGNALR_URL)
 
     - task: CopyFiles@2
       displayName: 'Copy Production Files to Artifact Staging'
