@@ -82,7 +82,7 @@ stages:
       displayName: 'Publish Test Artifacts'
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)/test'
-        ArtifactName: 'drop'
+        ArtifactName: 'test'  # Unique artifact name
         publishLocation: 'Container'
 
   - job: BuildProd
@@ -135,7 +135,7 @@ stages:
         keepToken: false
         tokens: |
           BUILD_VERSION=$(buildVersion)
-          API_URL=$(API_URL)
+          API_URL=$(API_URL)g
           SIGNALR_URL=$(SIGNALR_URL)
 
     # Build Production Version
@@ -156,7 +156,7 @@ stages:
       displayName: 'Publish Production Artifacts'
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)/prod'
-        ArtifactName: 'drop'
+        ArtifactName: 'prod'  # Unique artifact name
         publishLocation: 'Container'
 
 - stage: DeployTest
@@ -185,10 +185,10 @@ stages:
           - task: ArchiveFiles@2
             displayName: 'Archive Test Files'
             inputs:
-              rootFolderOrFile: '$(Pipeline.Workspace)/drop/test'
+              rootFolderOrFile: '$(Pipeline.Workspace)/test'  # Changed from "drop/test"
               includeRootFolder: false
               archiveType: 'zip'
-              archiveFile: '$(Pipeline.Workspace)/drop/test.zip'
+              archiveFile: '$(Pipeline.Workspace)/test.zip'
               replaceExistingArchive: true
 
           - task: AzureWebApp@1
@@ -232,10 +232,10 @@ stages:
           - task: ArchiveFiles@2
             displayName: 'Archive Production Files'
             inputs:
-              rootFolderOrFile: '$(Pipeline.Workspace)/drop/prod'
+              rootFolderOrFile: '$(Pipeline.Workspace)/prod'  # Changed from "drop/prod"
               includeRootFolder: false
               archiveType: 'zip'
-              archiveFile: '$(Pipeline.Workspace)/drop/prod.zip'
+              archiveFile: '$(Pipeline.Workspace)/prod.zip'
               replaceExistingArchive: true
 
           - task: AzureWebApp@1
