@@ -161,7 +161,7 @@ stages:
 
 - stage: DeployTest
   displayName: Deploy to Test
-  dependsOn: Build  # Waits for entire Build stage
+  dependsOn: Build
   condition: succeeded()
   variables:
     - group: SMD-Test-Variables
@@ -185,10 +185,10 @@ stages:
           - task: ArchiveFiles@2
             displayName: 'Archive Test Files'
             inputs:
-              rootFolderOrFile: '$(Pipeline.Workspace)/test'  # Changed from "drop/test"
+              rootFolderOrFile: '$(Pipeline.Workspace)/test'  # Correct path
               includeRootFolder: false
               archiveType: 'zip'
-              archiveFile: '$(Pipeline.Workspace)/test.zip'
+              archiveFile: '$(Pipeline.Workspace)/test/test.zip'  # Updated
               replaceExistingArchive: true
 
           - task: AzureWebApp@1
@@ -196,7 +196,7 @@ stages:
             inputs:
               azureSubscription: 'SocialMediaDetoxConnection'
               appName: 'smd-web-test'
-              package: '$(Pipeline.Workspace)/drop/test.zip'
+              package: '$(Pipeline.Workspace)/test/test.zip'  # Updated
               appType: 'webApp'
 
           - task: AzureAppServiceManage@0
@@ -208,7 +208,7 @@ stages:
 
 - stage: DeployProduction
   displayName: Deploy to Production
-  dependsOn: DeployTest  # Sequential deployment
+  dependsOn: DeployTest
   condition: succeeded()
   variables:
     - group: SMD-Prod-Variables
@@ -232,10 +232,10 @@ stages:
           - task: ArchiveFiles@2
             displayName: 'Archive Production Files'
             inputs:
-              rootFolderOrFile: '$(Pipeline.Workspace)/prod'  # Changed from "drop/prod"
+              rootFolderOrFile: '$(Pipeline.Workspace)/prod'  # Correct path
               includeRootFolder: false
               archiveType: 'zip'
-              archiveFile: '$(Pipeline.Workspace)/prod.zip'
+              archiveFile: '$(Pipeline.Workspace)/prod/prod.zip'  # Updated
               replaceExistingArchive: true
 
           - task: AzureWebApp@1
@@ -243,7 +243,7 @@ stages:
             inputs:
               azureSubscription: 'SocialMediaDetoxConnection'
               appName: 'smd-web-prod'
-              package: '$(Pipeline.Workspace)/drop/prod.zip'
+              package: '$(Pipeline.Workspace)/prod/prod.zip'  # Updated
               appType: 'webApp'
 
           - task: AzureAppServiceManage@0
