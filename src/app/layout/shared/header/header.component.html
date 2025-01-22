@@ -57,10 +57,10 @@
     </button>
     <div ngbDropdownMenu aria-labelledby="accountTasksDropdown">
       <button ngbDropdownItem (click)="navigateToTopics()">Topics</button>
-      <button ngbDropdownItem (click)="navigateToContentTypes()">Content Types</button>
+      <button ngbDropdownItem (click)="navigateToContentTypes()" *ngIf="currentUser?.isAdmin">Content Types</button>
       <button ngbDropdownItem (click)="navigateToSubTopics()">Sub Topics</button>
       <button ngbDropdownItem (click)="navigateToChannels()">Channels</button>
-      <button ngbDropdownItem (click)="navigateToDefaultTopics()">Default Topics</button>
+      <button ngbDropdownItem (click)="navigateToDefaultTopics()" *ngIf="currentUser?.isAdmin">Default Topics</button>
       <button ngbDropdownItem (click)="navigateToSearchResults()">Search Results</button>
     </div>
   </div>

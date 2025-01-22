@@ -49,7 +49,7 @@ export class HomeLandingComponent implements OnInit {
       error: (error) => {
         console.error('Error loading daily quote:', error);
         this.dailyQuote = 'Take a moment to breathe and reflect.';
-        this.dailyImageUrl = 'assets/default-quote-image.jpg';
+        this.dailyImageUrl = 'assets/default_image.png';
       }
     });
   }

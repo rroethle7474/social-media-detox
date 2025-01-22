@@ -24,7 +24,7 @@
               "src/favicon.ico",
               {
                 "glob": "**/*",
-                "input": "src/app/assets",
+                "input": "src/assets",
                 "output": "/assets"
               },
               "src/web.config"
