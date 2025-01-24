@@ -1,5 +1,5 @@
 import { Component, AfterViewInit, NgZone, ChangeDetectorRef } from '@angular/core';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../../services/user.service';
@@ -7,6 +7,7 @@ import { LoginDto } from '../../../../models/Dtos/login.dto';
 import { GoogleLoginDto } from '../../../../models/Dtos/google-login.dto';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { RegisterModalComponent } from '../register-modal/register-modal.component';
 
 declare var google: any;
 
@@ -31,7 +32,8 @@ export class LoginModalComponent implements AfterViewInit {
     private toastr: ToastrService,
     private ngZone: NgZone,
     private cdr: ChangeDetectorRef,
-    private router: Router
+    private router: Router,
+    private modalService: NgbModal
   ) {}
 
   ngAfterViewInit() {
@@ -128,5 +130,10 @@ export class LoginModalComponent implements AfterViewInit {
     // Implement Google Sign-In here and return the IdToken
     // This is a placeholder and should be replaced with actual Google Sign-In logic
     return 'placeholder-google-id-token';
+  }
+
+  openRegisterModal() {
+    this.activeModal.dismiss();
+    this.modalService.open(RegisterModalComponent, { centered: true });
   }
 }

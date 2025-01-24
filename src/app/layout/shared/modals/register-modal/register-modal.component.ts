@@ -6,11 +6,12 @@ import { UserService } from '../../../../services/user.service';
 import { RegisterDto } from '../../../../models/Dtos/register.dto';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { EmailValidatorDirective } from '../../../../directives/email-validator.directive';
 
 @Component({
   selector: 'app-register-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, EmailValidatorDirective],
   templateUrl: './register-modal.component.html',
   styleUrls: ['./register-modal.component.css']
 })
@@ -23,6 +24,7 @@ export class RegisterModalComponent {
   };
   confirmPassword: string = '';
   errorMessage: string | null = null;
+  emailTouched = false;
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -35,9 +37,14 @@ export class RegisterModalComponent {
     this.activeModal.dismiss('Cross click');
   }
 
+  onEmailBlur() {
+    this.emailTouched = true;
+  }
+
   onRegister() {
     if (this.registerData.password !== this.confirmPassword) {
       this.errorMessage = 'Passwords do not match';
+      this.toastr.error('Passwords do not match');
       return;
     }
 
@@ -51,8 +58,17 @@ export class RegisterModalComponent {
       },
       error: (error) => {
         console.error('Registration failed', error);
-        this.errorMessage = error.error.message || 'An error occurred during registration';
-        this.toastr.error(this.errorMessage || 'An error occurred during registration');
+        const errorMessage = error.error.message || 'An error occurred during registration';
+        this.errorMessage = errorMessage;
+
+        // Keep modal open for validation errors (typically 400 status)
+        if (error.status === 400) {
+          this.toastr.error(errorMessage);
+        } else {
+          // Close modal for system errors (500, network issues, etc)
+          this.activeModal.dismiss('Registration failed');
+          this.toastr.error(errorMessage);
+        }
       }
     });
   }
