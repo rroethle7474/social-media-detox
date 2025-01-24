@@ -159,8 +159,8 @@ export class ArticleGridComponent implements OnInit, OnDestroy {
       // console.log("Article:", article.channelName);
       const termMatch = !term || article.term.toLowerCase() === term.toLowerCase();
       const channelMatch = (!youtubeChannel && !xChannel) ||
-        (youtubeChannel && article.contentTypeId === 3 && article.isChannel && article.term === youtubeChannel) ||
-        (xChannel && article.contentTypeId === 2 && article.isChannel && article.term === xChannel);
+        (youtubeChannel && article.contentTypeId === 2 && article.isChannel && article.term === youtubeChannel) ||
+        (xChannel && article.contentTypeId === 1 && article.isChannel && article.term === xChannel);
       return termMatch && channelMatch;
     });
 
@@ -283,7 +283,7 @@ export class ArticleGridComponent implements OnInit, OnDestroy {
   }
 
   openVideoModal(article: SearchResultDto) {
-    if (article.contentTypeId === 3 && this.videoModal) {
+    if (article.contentTypeId === 2 && this.videoModal) {
       this.selectedArticle = article;
       this.videoModal.show();
     }
@@ -400,8 +400,8 @@ export class ArticleGridComponent implements OnInit, OnDestroy {
       const request = { userId: this.currentUser.id };
       this.channelService.getChannels(request).subscribe({
         next: (channels: ChannelDto[]) => {
-          this.youtubeChannels = channels.filter(channel => channel.contentTypeId === 3);
-          this.xChannels = channels.filter(channel => channel.contentTypeId === 2);
+          this.youtubeChannels = channels.filter(channel => channel.contentTypeId === 2);
+          this.xChannels = channels.filter(channel => channel.contentTypeId === 1);
         },
         error: (error) => {
           console.error('Error fetching channels:', error);
@@ -437,8 +437,8 @@ export class ArticleGridComponent implements OnInit, OnDestroy {
     const endIndex = startIndex + this.itemsPerPage;
 
     const filteredByType = this.filteredArticles.filter(article =>
-      (contentType === 'youtube' && article.contentTypeId === 3) ||
-      (contentType === 'twitter' && article.contentTypeId === 2)
+      (contentType === 'youtube' && article.contentTypeId === 2) ||
+      (contentType === 'twitter' && article.contentTypeId === 1)
     );
 
     const newArticles = filteredByType.slice(startIndex, endIndex);

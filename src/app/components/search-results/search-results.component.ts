@@ -85,8 +85,8 @@ export class SearchResultsComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   filterArticles() {
-    this.youtubeArticles = this.allArticles.filter(article => article.contentTypeId === 3);
-    this.twitterArticles = this.allArticles.filter(article => article.contentTypeId === 2);
+    this.youtubeArticles = this.allArticles.filter(article => article.contentTypeId === 2);
+    this.twitterArticles = this.allArticles.filter(article => article.contentTypeId === 1);
     this.twitterTabPreloaded = false;
 
     this.currentPage = { youtube: 1, twitter: 1 };
@@ -127,7 +127,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   openVideoModal(article: SearchResultDto) {
-    if (article.contentTypeId === 3 && this.videoModal) {
+    if (article.contentTypeId === 2 && this.videoModal) {
       this.selectedArticle = article;
       this.videoModal.show();
     }
