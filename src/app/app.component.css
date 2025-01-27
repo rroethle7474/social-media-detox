@@ -7,3 +7,14 @@
 .content {
   flex: 1;
 }
+
+/* Add these styles to ensure proper z-indexing */
+::ng-deep .offcanvas {
+  z-index: 1045;
+  background-color: #1a1a1a;
+  color: #ffffff;
+}
+
+::ng-deep .offcanvas-backdrop {
+  z-index: 1040;
+}

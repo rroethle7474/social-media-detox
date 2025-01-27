@@ -1,8 +1,9 @@
 <header class="sticky-top header-dark">
-  <div class="container d-flex align-items-center" style="height: 56px;">
+  <div class="container d-flex align-items-center" style="height: 64px;">
+    <!-- Desktop View -->
     <div class="d-none d-md-flex w-100 align-items-center">
       <a routerLink="/" class="header-brand d-flex align-items-center me-4">
-        <i class="bi bi-house me-2"></i>
+        <i class="bi bi-house-heart me-2"></i>
         Social Media Detox
       </a>
 
@@ -11,22 +12,29 @@
       </div>
 
       <!-- Header Icons -->
-      <div class="d-flex align-items-center ms-auto">
-        <div class="header-icon me-3" (click)="navigateToSearchResults()">
+      <div class="d-flex align-items-center gap-2 ms-auto">
+        <button class="header-icon" (click)="navigateToSearchResults()">
           <i class="bi bi-search"></i>
-        </div>
+        </button>
 
-        <div ngbDropdown class="header-icon me-3" placement="bottom-end">
-          <div class="btn-header" ngbDropdownToggle>
+        <div ngbDropdown class="d-inline-block" placement="bottom-end" #notificationDropdown="ngbDropdown">
+          <button class="header-icon" ngbDropdownToggle>
             <i class="bi bi-bell"></i>
             <span class="notification-badge" *ngIf="hasUnreadNotifications">1</span>
-          </div>
-          <div ngbDropdownMenu class="dropdown-menu-end">
-            <div class="px-3 py-2 text-muted" *ngIf="!notifications.length">
+          </button>
+          <div ngbDropdownMenu class="dropdown-menu-end notification-dropdown">
+            <div class="d-flex justify-content-between align-items-center px-3 py-2">
+              <span class="text-white">Notifications</span>
+              <button class="btn-close-custom" ngbDropdownItem (click)="notificationDropdown.close()">
+                <i class="bi bi-x"></i>
+              </button>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="px-3 py-2 notification-item" *ngIf="!notifications.length">
               No new notifications
             </div>
             <ng-container *ngFor="let notification of notifications">
-              <button ngbDropdownItem (click)="markNotificationAsRead(notification)">
+              <button ngbDropdownItem class="notification-item" (click)="markNotificationAsRead(notification)">
                 {{ notification.message }}
               </button>
             </ng-container>
@@ -37,48 +45,104 @@
 
     <!-- Mobile View -->
     <div class="d-flex d-md-none align-items-center w-100">
-      <button class="btn btn-header me-2" (click)="openOffcanvas()">
+      <button class="header-icon mobile-menu" (click)="openOffcanvas(offcanvasContent)">
         <i class="bi bi-list"></i>
-        <span class="visually-hidden">Toggle Menu</span>
       </button>
-      <a routerLink="/" class="header-brand d-flex align-items-center">
-        <i class="bi bi-house me-2"></i>
-        Social Media Detox
+      <a routerLink="/" class="header-brand">
+        <i class="bi bi-house-heart me-2"></i>
+        <span class="d-none d-sm-inline">Social Media Detox</span>
+        <span class="d-inline d-sm-none">SM Detox</span>
       </a>
+
+      <!-- Mobile Header Icons -->
+      <div class="d-flex align-items-center gap-2 ms-auto">
+        <button class="header-icon" (click)="navigateToSearchResults()">
+          <i class="bi bi-search"></i>
+        </button>
+
+        <div ngbDropdown class="d-inline-block" placement="bottom-end" #notificationDropdown="ngbDropdown">
+          <button class="header-icon" ngbDropdownToggle>
+            <i class="bi bi-bell"></i>
+            <span class="notification-badge" *ngIf="hasUnreadNotifications">1</span>
+          </button>
+          <div ngbDropdownMenu class="dropdown-menu-end notification-dropdown">
+            <div class="d-flex justify-content-between align-items-center px-3 py-2">
+              <span class="text-white">Notifications</span>
+              <button class="btn-close-custom" ngbDropdownItem (click)="notificationDropdown.close()">
+                <i class="bi bi-x"></i>
+              </button>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="px-3 py-2 notification-item" *ngIf="!notifications.length">
+              No new notifications
+            </div>
+            <ng-container *ngFor="let notification of notifications">
+              <button ngbDropdownItem class="notification-item" (click)="markNotificationAsRead(notification)">
+                {{ notification.message }}
+              </button>
+            </ng-container>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </header>
 
 <ng-template #navItems>
   <div ngbDropdown class="d-inline-block me-2" [placement]="isMobile ? 'bottom-start' : 'bottom-end'" *ngIf="currentUser">
-    <button class="btn btn-link" id="accountTasksDropdown" ngbDropdownToggle>
-      <i class="bi bi-person-check desktop-icon"></i>
-      <span class="mobile-label">Account Tasks</span>
+    <button class="nav-link" id="accountTasksDropdown" ngbDropdownToggle>
+      <i class="bi bi-person-check me-2"></i>
+      <span>Account Tasks</span>
     </button>
     <div ngbDropdownMenu aria-labelledby="accountTasksDropdown">
-      <button ngbDropdownItem (click)="navigateToTopics()">Topics</button>
-      <button ngbDropdownItem (click)="navigateToContentTypes()" *ngIf="currentUser?.isAdmin">Content Types</button>
-      <button ngbDropdownItem (click)="navigateToSubTopics()">Sub Topics</button>
-      <button ngbDropdownItem (click)="navigateToChannels()">Channels</button>
-      <button ngbDropdownItem (click)="navigateToDefaultTopics()" *ngIf="currentUser?.isAdmin">Default Topics</button>
-      <button ngbDropdownItem (click)="navigateToSearchResults()">Search Results</button>
+      <button ngbDropdownItem (click)="navigateToTopics()">
+        <i class="bi bi-grid me-2"></i>Topics
+      </button>
+      <button ngbDropdownItem (click)="navigateToContentTypes()" *ngIf="currentUser?.isAdmin">
+        <i class="bi bi-collection me-2"></i>Content Types
+      </button>
+      <button ngbDropdownItem (click)="navigateToSubTopics()">
+        <i class="bi bi-diagram-2 me-2"></i>Sub Topics
+      </button>
+      <button ngbDropdownItem (click)="navigateToChannels()">
+        <i class="bi bi-broadcast me-2"></i>Channels
+      </button>
+      <button ngbDropdownItem (click)="navigateToDefaultTopics()" *ngIf="currentUser?.isAdmin">
+        <i class="bi bi-star me-2"></i>Default Topics
+      </button>
+      <button ngbDropdownItem (click)="navigateToSearchResults()">
+        <i class="bi bi-search me-2"></i>Search Results
+      </button>
     </div>
   </div>
+
   <div ngbDropdown class="d-inline-block" [placement]="isMobile ? 'bottom-start' : 'bottom-end'">
-    <button class="btn btn-link" id="accountDropdown" ngbDropdownToggle>
-      <i class="bi bi-person desktop-icon"></i>
-      <span class="mobile-label">{{ currentUser ? 'Account' : 'Login/Register' }}</span>
+    <button class="nav-link" id="accountDropdown" ngbDropdownToggle>
+      <i class="bi bi-person me-2"></i>
+      <span>{{ currentUser ? 'Account' : 'Login/Register' }}</span>
     </button>
     <div ngbDropdownMenu aria-labelledby="accountDropdown">
       <ng-container *ngIf="!currentUser">
-        <button ngbDropdownItem (click)="openLoginModal()">Login</button>
-        <button ngbDropdownItem (click)="openRegisterModal()">Register</button>
+        <button ngbDropdownItem (click)="openLoginModal()">
+          <i class="bi bi-box-arrow-in-right me-2"></i>Login
+        </button>
+        <button ngbDropdownItem (click)="openRegisterModal()">
+          <i class="bi bi-person-plus me-2"></i>Register
+        </button>
       </ng-container>
       <ng-container *ngIf="currentUser">
-        <button ngbDropdownItem (click)="navigateToAccountProfile()">Account Profile</button>
-        <button ngbDropdownItem (click)="navigateToChangePassword()">Change Password</button>
-        <button ngbDropdownItem (click)="navigateToChangeEmail()">Change Email</button>
-        <button ngbDropdownItem (click)="logout()">Logout</button>
+        <button ngbDropdownItem (click)="navigateToAccountProfile()">
+          <i class="bi bi-person-badge me-2"></i>Account Profile
+        </button>
+        <button ngbDropdownItem (click)="navigateToChangePassword()">
+          <i class="bi bi-key me-2"></i>Change Password
+        </button>
+        <button ngbDropdownItem (click)="navigateToChangeEmail()">
+          <i class="bi bi-envelope me-2"></i>Change Email
+        </button>
+        <button ngbDropdownItem (click)="logout()">
+          <i class="bi bi-box-arrow-right me-2"></i>Logout
+        </button>
       </ng-container>
     </div>
   </div>
@@ -91,7 +155,69 @@
   </div>
   <div class="offcanvas-body">
     <nav class="d-flex flex-column">
-      <ng-container *ngTemplateOutlet="navItems"></ng-container>
+      <div class="w-100 mobile-nav-container">
+        <div class="mobile-nav-item" *ngIf="currentUser">
+          <div ngbDropdown class="d-block w-100" placement="bottom-start">
+            <button class="nav-link w-100 text-start" id="mobileAccountTasksDropdown" ngbDropdownToggle>
+              <i class="bi bi-person-check me-2"></i>
+              <span>Account Tasks</span>
+            </button>
+            <div ngbDropdownMenu aria-labelledby="mobileAccountTasksDropdown" class="w-100">
+              <button ngbDropdownItem (click)="navigateToTopics()">
+                <i class="bi bi-grid me-2"></i>Topics
+              </button>
+              <button ngbDropdownItem (click)="navigateToContentTypes()" *ngIf="currentUser?.isAdmin">
+                <i class="bi bi-collection me-2"></i>Content Types
+              </button>
+              <button ngbDropdownItem (click)="navigateToSubTopics()">
+                <i class="bi bi-diagram-2 me-2"></i>Sub Topics
+              </button>
+              <button ngbDropdownItem (click)="navigateToChannels()">
+                <i class="bi bi-broadcast me-2"></i>Channels
+              </button>
+              <button ngbDropdownItem (click)="navigateToDefaultTopics()" *ngIf="currentUser?.isAdmin">
+                <i class="bi bi-star me-2"></i>Default Topics
+              </button>
+              <button ngbDropdownItem (click)="navigateToSearchResults()">
+                <i class="bi bi-search me-2"></i>Search Results
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mobile-nav-item">
+          <div ngbDropdown class="d-block w-100" placement="bottom-start">
+            <button class="nav-link w-100 text-start" id="mobileAccountDropdown" ngbDropdownToggle>
+              <i class="bi bi-person me-2"></i>
+              <span>{{ currentUser ? 'Account' : 'Login/Register' }}</span>
+            </button>
+            <div ngbDropdownMenu aria-labelledby="mobileAccountDropdown" class="w-100">
+              <ng-container *ngIf="!currentUser">
+                <button ngbDropdownItem (click)="openLoginModal()">
+                  <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                </button>
+                <button ngbDropdownItem (click)="openRegisterModal()">
+                  <i class="bi bi-person-plus me-2"></i>Register
+                </button>
+              </ng-container>
+              <ng-container *ngIf="currentUser">
+                <button ngbDropdownItem (click)="navigateToAccountProfile()">
+                  <i class="bi bi-person-badge me-2"></i>Account Profile
+                </button>
+                <button ngbDropdownItem (click)="navigateToChangePassword()">
+                  <i class="bi bi-key me-2"></i>Change Password
+                </button>
+                <button ngbDropdownItem (click)="navigateToChangeEmail()">
+                  <i class="bi bi-envelope me-2"></i>Change Email
+                </button>
+                <button ngbDropdownItem (click)="logout()">
+                  <i class="bi bi-box-arrow-right me-2"></i>Logout
+                </button>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
     </nav>
   </div>
 </ng-template>

@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, HostListener, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbModal, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbOffcanvas, NgbOffcanvasRef } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, takeUntil } from 'rxjs';
 
 import { LoginModalComponent } from '../modals/login-modal/login-modal.component';
@@ -37,6 +37,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   currentUser: ApplicationUserDto | null = null;
   notifications: { id: number; message: string; timestamp: Date }[] = [];
   hasUnreadNotifications = false;
+  private offcanvasRef: NgbOffcanvasRef | null = null;
 
   constructor(
     private offcanvasService: NgbOffcanvas,
@@ -80,44 +81,65 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.modalService.open(RegisterModalComponent, { centered: true });
   }
 
-  openOffcanvas() {
-    this.offcanvasService.open(this.offcanvasContent, { position: 'start' });
+  openOffcanvas(content: any) {
+    this.offcanvasRef = this.offcanvasService.open(content, {
+      position: 'start',
+      backdrop: true,
+      keyboard: true,
+      panelClass: 'bg-dark'
+    });
+  }
+
+  private closeOffcanvas() {
+    if (this.offcanvasRef) {
+      this.offcanvasRef.close();
+      this.offcanvasRef = null;
+    }
   }
 
   navigateToTopics() {
     this.router.navigate(['/topics']);
+    this.closeOffcanvas();
   }
 
   navigateToContentTypes() {
     this.router.navigate(['/content-types']);
+    this.closeOffcanvas();
   }
 
   navigateToSubTopics() {
     this.router.navigate(['/sub-topics']);
+    this.closeOffcanvas();
   }
 
   navigateToChannels() {
     this.router.navigate(['/channels']);
+    this.closeOffcanvas();
   }
 
   navigateToAccountProfile() {
     this.router.navigate(['/account-profile']);
+    this.closeOffcanvas();
   }
 
   navigateToDefaultTopics() {
     this.router.navigate(['/default-topic']);
+    this.closeOffcanvas();
   }
 
   navigateToChangePassword() {
     this.router.navigate(['/change-password']);
+    this.closeOffcanvas();
   }
 
   navigateToChangeEmail() {
     this.router.navigate(['/change-email']);
+    this.closeOffcanvas();
   }
 
   navigateToSearchResults() {
     this.router.navigate(['/search-results']);
+    this.closeOffcanvas();
   }
 
   ngOnDestroy() {
@@ -128,6 +150,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   logout() {
     this.userService.logout();
     this.router.navigate(['/']);
+    this.closeOffcanvas();
   }
 
   private setupSignalRHandlers() {

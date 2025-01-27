@@ -1,29 +1,37 @@
 <section class="hero-section">
   <div class="container">
-    <ng-container *ngIf="!isLoggedIn">
-      <h1 class="hero-title">Welcome to Social Media Detox</h1>
-      <p class="hero-subtitle">
-        Take a break from social media and improve your mental health with our guided detox journey.
-      </p>
-      <div class="btn-group">
-        <button class="btn btn-primary" (click)="openRegisterModal()">Start Your Detox</button>
-        <button class="btn btn-outline" (click)="navigateToLearnMore()">Learn More</button>
-      </div>
-    </ng-container>
+    <div class="hero-content text-center">
+      <ng-container *ngIf="!isLoggedIn">
+        <h1 class="hero-title">Transform Your Digital Life</h1>
+        <p class="hero-subtitle">
+          Take control of your social media habits and discover a more mindful way to connect. Join our guided detox journey for better mental well-being.
+        </p>
+        <div class="btn-group">
+          <button class="btn btn-primary d-flex align-items-center justify-content-center gap-2" (click)="openRegisterModal()">
+            <i class="bi bi-rocket"></i>
+            Start Your Detox
+          </button>
+          <button class="btn btn-outline d-flex align-items-center justify-content-center gap-2" (click)="navigateToLearnMore()">
+            <i class="bi bi-info-circle"></i>
+            Learn More
+          </button>
+        </div>
+      </ng-container>
 
-    <ng-container *ngIf="isLoggedIn">
-      <div class="daily-inspiration">
-        <div class="quote-container">
-          <h1 class="hero-title">Daily Inspiration</h1>
-          <p class="hero-subtitle quote-text">
-            {{ dailyQuote }}
-          </p>
+      <ng-container *ngIf="isLoggedIn">
+        <div class="daily-inspiration">
+          <div class="quote-container">
+            <h2 class="mb-4">Today's Inspiration</h2>
+            <p class="quote-text">
+              {{ dailyQuote }}
+            </p>
+          </div>
+          <div class="image-container" *ngIf="dailyImageUrl">
+            <img [src]="dailyImageUrl" alt="Daily inspiration" class="img-fluid rounded">
+          </div>
         </div>
-        <div class="image-container" *ngIf="dailyImageUrl">
-          <img [src]="dailyImageUrl" alt="Daily inspiration" class="daily-image">
-        </div>
-      </div>
-    </ng-container>
+      </ng-container>
+    </div>
   </div>
 </section>
 <app-article-grid></app-article-grid>

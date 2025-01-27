@@ -46,6 +46,8 @@ export class QuoteService extends BaseDopamineDetoxApiService {
       map(response => {
         console.log('Raw response:', response);
         if (!response || !response.quoteImage || !response.quoteText) {
+          // TO-DO
+          // this is being thrown because the response is returning a null image. This is not necessarily bad since we use the default image if it fails. Need to fix this.
           throw new Error('Invalid quote response');
         }
 
