@@ -33,10 +33,11 @@ export class TopicComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.fetchTopics();
     this.userService.currentUser$.subscribe(user => {
       this.currentUser = user;
+      this.fetchTopics();
     });
+
   }
 
   fetchTopics(): void {
