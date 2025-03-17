@@ -14,6 +14,7 @@ export class TopicService extends BaseDopamineDetoxApiService {
   }
 
   getTopics(request: GetTopicsRequest): Observable<TopicDto[]> {
+    console.log("REQUEST", request);
     return this.http.post<TopicDto[]>(`${this.API_BASE_URL}/Topic/search`, request);
   }
 

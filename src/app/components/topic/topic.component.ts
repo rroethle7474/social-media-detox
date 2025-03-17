@@ -43,6 +43,7 @@ export class TopicComponent implements OnInit {
     const request: GetTopicsRequest = {
       userId: this.currentUser?.id || ''
     };
+    console.log("CURRENT USER", this.currentUser);
     this.apiService.getTopics(request).subscribe({
       next: (fetchedTopics) => {
         this.topics = fetchedTopics;
