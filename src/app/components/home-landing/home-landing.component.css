@@ -3,7 +3,7 @@
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   position: relative;
   overflow: hidden;
-  padding: 6rem 0;
+  padding: 3rem 0 4rem 0;
 }
 
 /* Add animated background pattern */
@@ -95,16 +95,50 @@
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   padding: 2.5rem;
-  margin-top: 2rem;
+  margin-top: 1.5rem;
+}
+
+/* Update Banner Styles */
+.update-banner {
+  background: linear-gradient(135deg, #e8f4f8 0%, #d1e6f0 100%);
+  border-radius: 16px;
+  border-left: 4px solid #1a1a1a;
+  padding: 1.25rem 2rem;
+  margin-top: 0.5rem;
+  text-align: left;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.update-banner:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.update-banner h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.update-banner p {
+  color: #495057;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+  padding-left: 1.75rem;
+}
+
+.update-banner i {
+  font-size: 1.5rem;
 }
 
 .quote-text {
-  font-size: 1.75rem;
-  line-height: 1.6;
+  font-size: 1.6rem;
+  line-height: 1.5;
   color: #1a1a1a;
   font-weight: 500;
   font-style: italic;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .image-container {
@@ -124,7 +158,7 @@
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .hero-section {
-    padding: 4rem 0;
+    padding: 2rem 0 4rem 0;
   }
 
   .hero-title {
@@ -152,5 +186,20 @@
 
   .daily-inspiration {
     padding: 1.5rem;
+  }
+
+  .update-banner {
+    padding: 1rem 1.25rem;
+    margin: 0.5rem 1rem 0 1rem;
+  }
+
+  .update-banner h3 {
+    font-size: 1.1rem;
+  }
+
+  .update-banner p {
+    font-size: 0.95rem;
+    padding-left: 0;
+    margin-top: 0.75rem;
   }
 }
