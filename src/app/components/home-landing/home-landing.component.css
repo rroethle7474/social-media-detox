@@ -107,6 +107,20 @@
   margin-bottom: 2rem;
 }
 
+.image-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.image-container img {
+  max-width: 400px;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .hero-section {
@@ -129,5 +143,14 @@
 
   .btn {
     width: 100%;
+  }
+
+  .image-container img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .daily-inspiration {
+    padding: 1.5rem;
   }
 }

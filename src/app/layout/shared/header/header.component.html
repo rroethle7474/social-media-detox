@@ -13,11 +13,11 @@
 
       <!-- Header Icons -->
       <div class="d-flex align-items-center gap-2 ms-auto">
-        <button class="header-icon" (click)="navigateToSearchResults()">
+        <button class="header-icon" (click)="navigateToSearchResults()" *ngIf="currentUser">
           <i class="bi bi-search"></i>
         </button>
 
-        <div ngbDropdown class="d-inline-block" placement="bottom-end" #notificationDropdown="ngbDropdown">
+        <div ngbDropdown class="d-inline-block" placement="bottom-end" #notificationDropdown="ngbDropdown" *ngIf="currentUser">
           <button class="header-icon" ngbDropdownToggle>
             <i class="bi bi-bell"></i>
             <span class="notification-badge" *ngIf="hasUnreadNotifications">1</span>
@@ -56,11 +56,11 @@
 
       <!-- Mobile Header Icons -->
       <div class="d-flex align-items-center gap-2 ms-auto">
-        <button class="header-icon" (click)="navigateToSearchResults()">
+        <button class="header-icon" (click)="navigateToSearchResults()" *ngIf="currentUser">
           <i class="bi bi-search"></i>
         </button>
 
-        <div ngbDropdown class="d-inline-block" placement="bottom-end" #notificationDropdown="ngbDropdown">
+        <div ngbDropdown class="d-inline-block" placement="bottom-end" #notificationDropdown="ngbDropdown" *ngIf="currentUser">
           <button class="header-icon" ngbDropdownToggle>
             <i class="bi bi-bell"></i>
             <span class="notification-badge" *ngIf="hasUnreadNotifications">1</span>
@@ -110,7 +110,7 @@
       <button ngbDropdownItem (click)="navigateToDefaultTopics()" *ngIf="currentUser?.isAdmin">
         <i class="bi bi-star me-2"></i>Default Topics
       </button>
-      <button ngbDropdownItem (click)="navigateToSearchResults()">
+      <button ngbDropdownItem (click)="navigateToSearchResults()" *ngIf="currentUser">
         <i class="bi bi-search me-2"></i>Search Results
       </button>
     </div>
@@ -128,6 +128,9 @@
         </button>
         <button ngbDropdownItem (click)="openRegisterModal()">
           <i class="bi bi-person-plus me-2"></i>Register
+        </button>
+        <button ngbDropdownItem (click)="loginForDemo()" title="One-click login with demo account">
+          <i class="bi bi-play-circle me-2"></i>Login for Demo
         </button>
       </ng-container>
       <ng-container *ngIf="currentUser">
@@ -178,7 +181,7 @@
               <button ngbDropdownItem (click)="navigateToDefaultTopics()" *ngIf="currentUser?.isAdmin">
                 <i class="bi bi-star me-2"></i>Default Topics
               </button>
-              <button ngbDropdownItem (click)="navigateToSearchResults()">
+              <button ngbDropdownItem (click)="navigateToSearchResults()" *ngIf="currentUser">
                 <i class="bi bi-search me-2"></i>Search Results
               </button>
             </div>
@@ -198,6 +201,9 @@
                 </button>
                 <button ngbDropdownItem (click)="openRegisterModal()">
                   <i class="bi bi-person-plus me-2"></i>Register
+                </button>
+                <button ngbDropdownItem (click)="loginForDemo()" title="One-click login with demo account">
+                  <i class="bi bi-play-circle me-2"></i>Login for Demo
                 </button>
               </ng-container>
               <ng-container *ngIf="currentUser">

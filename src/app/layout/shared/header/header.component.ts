@@ -21,9 +21,7 @@ import { SignalRService } from '../../../services/signalr.service';
     CommonModule,
     RouterModule,
     NgbDropdownModule,
-    NgbOffcanvasModule,
-    LoginModalComponent,
-    RegisterModalComponent
+    NgbOffcanvasModule
   ],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
@@ -53,15 +51,22 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(user => {
         this.currentUser = user;
-      });
 
-    this.signalRService.isConnected().pipe(
-      takeUntil(this.destroy$)
-    ).subscribe((connected: boolean) => {
-      if (connected) {
-        this.setupSignalRHandlers();
-      }
-    });
+        // Only setup SignalR handlers if the user is logged in
+        if (user) {
+          this.signalRService.isConnected().pipe(
+            takeUntil(this.destroy$)
+          ).subscribe((connected: boolean) => {
+            if (connected) {
+              this.setupSignalRHandlers();
+            }
+          });
+        } else {
+          // Clear notifications when user logs out
+          this.notifications = [];
+          this.hasUnreadNotifications = false;
+        }
+      });
   }
 
   @HostListener('window:resize')
@@ -79,6 +84,27 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   openRegisterModal() {
     this.modalService.open(RegisterModalComponent, { centered: true });
+  }
+
+  loginForDemo() {
+    // Auto login with demo credentials
+    const demoLoginData = {
+      email: 'demo@demo.com',
+      password: 'demoAccount1!'
+    };
+
+    this.userService.login(demoLoginData).subscribe({
+      next: (response) => {
+        console.log("Demo login successful");
+        this.router.navigate(['/home']);
+        this.closeOffcanvas();
+      },
+      error: (error) => {
+        console.error("Demo login failed", error);
+        // If demo login fails, fall back to opening the login modal
+        this.openLoginModal();
+      }
+    });
   }
 
   openOffcanvas(content: any) {
@@ -138,8 +164,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   navigateToSearchResults() {
-    this.router.navigate(['/search-results']);
-    this.closeOffcanvas();
+    if (this.currentUser) {
+      this.router.navigate(['/search-results']);
+      this.closeOffcanvas();
+    }
   }
 
   ngOnDestroy() {
