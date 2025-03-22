@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SearchResultService } from '../../services/search-result.service';
@@ -24,6 +24,8 @@ import { HttpHeaders } from '@angular/common/http';
   styleUrls: ['./search-results.component.css']
 })
 export class SearchResultsComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChildren('tweetContainer') tweetContainers!: QueryList<ElementRef>;
+
   allArticles: SearchResultDto[] = [];
   youtubeArticles: SearchResultDto[] = [];
   twitterArticles: SearchResultDto[] = [];
@@ -34,6 +36,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy, AfterViewInit 
   activeTab: 'youtube' | 'twitter' = 'youtube';
   defaultImageUrl: string = 'assets/default_thumbnail.png';
   public twitterTabPreloaded: boolean = false;
+  private intersectionObserver: IntersectionObserver | null = null;
 
   currentPage: { [key: string]: number } = { youtube: 1, twitter: 1 };
   itemsPerPage = 3;
@@ -54,16 +57,30 @@ export class SearchResultsComponent implements OnInit, OnDestroy, AfterViewInit 
       this.loadAllArticles();
     });
     this.initVideoModal();
+    this.loadTwitterWidget();
   }
 
   ngAfterViewInit() {
-    this.loadTwitterWidget();
-    this.renderTweets();
+    // Initialize IntersectionObserver for lazy loading tweets
+    this.setupIntersectionObserver();
+    
+    // Initial render for any visible tweets
+    setTimeout(() => this.renderTweets(), 0);
+    
+    // Re-check when tweet containers change
+    this.tweetContainers.changes.subscribe(() => {
+      this.setupIntersectionObserver();
+    });
   }
 
   ngOnDestroy() {
     if (this.userSubscription) {
       this.userSubscription.unsubscribe();
+    }
+    
+    // Clean up IntersectionObserver
+    if (this.intersectionObserver) {
+      this.intersectionObserver.disconnect();
     }
   }
 
@@ -122,7 +139,11 @@ export class SearchResultsComponent implements OnInit, OnDestroy, AfterViewInit 
   setActiveTab(tab: 'youtube' | 'twitter') {
     this.activeTab = tab;
     if (tab === 'twitter') {
-      this.renderTweets();
+      // Allow time for DOM to update before rendering tweets
+      setTimeout(() => {
+        this.setupIntersectionObserver();
+        this.renderTweets();
+      }, 100);
     }
   }
 
@@ -146,16 +167,86 @@ export class SearchResultsComponent implements OnInit, OnDestroy, AfterViewInit 
       script.src = 'https://platform.twitter.com/widgets.js';
       script.charset = 'utf-8';
       script.async = true;
-      document.body.appendChild(script);
+      
+      script.onload = () => {
+        console.log('Twitter widget script loaded');
+        this.renderTweets();
+      };
+      
+      document.head.appendChild(script);
+    } else {
+      this.renderTweets();
     }
+  }
+
+  private setupIntersectionObserver() {
+    // Disconnect previous observer if it exists
+    if (this.intersectionObserver) {
+      this.intersectionObserver.disconnect();
+    }
+    
+    // Create new IntersectionObserver
+    this.intersectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Tweet container is visible, render the tweet
+          const tweetElement = entry.target as HTMLElement;
+          if (tweetElement.dataset['rendered'] !== 'true') {
+            // Mark as rendered to avoid re-rendering
+            tweetElement.dataset['rendered'] = 'true';
+            
+            // Render this specific tweet
+            if ((window as any).twttr && (window as any).twttr.widgets) {
+              (window as any).twttr.widgets.load(tweetElement);
+            }
+          }
+          
+          // Stop observing this element
+          this.intersectionObserver?.unobserve(entry.target);
+        }
+      });
+    }, {
+      root: null, // viewport
+      rootMargin: '100px', // load tweets when they're 100px from viewport
+      threshold: 0.1 // trigger when at least 10% of the element is visible
+    });
+    
+    // Start observing tweet containers
+    setTimeout(() => {
+      if (this.tweetContainers) {
+        this.tweetContainers.forEach(container => {
+          this.intersectionObserver?.observe(container.nativeElement);
+        });
+      }
+    }, 0);
   }
 
   renderTweets() {
     if ((window as any).twttr && (window as any).twttr.widgets) {
-      (window as any).twttr.widgets.load();
+      // Only render tweets that are visible in the viewport
+      if (this.tweetContainers) {
+        this.tweetContainers.forEach(container => {
+          const element = container.nativeElement;
+          if (this.isElementInViewport(element) && element.dataset['rendered'] !== 'true') {
+            element.dataset['rendered'] = 'true';
+            (window as any).twttr.widgets.load(element);
+          }
+        });
+      }
     } else {
-      setTimeout(() => this.renderTweets(), 100);
+      // Twitter script not loaded yet, retry after a delay
+      setTimeout(() => this.renderTweets(), 200);
     }
+  }
+  
+  private isElementInViewport(el: HTMLElement): boolean {
+    const rect = el.getBoundingClientRect();
+    return (
+      rect.top >= -100 &&
+      rect.left >= 0 &&
+      rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) + 100 &&
+      rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
   }
 
   getSafeUrl(url: string): SafeResourceUrl {

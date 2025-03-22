@@ -72,9 +72,10 @@
         <div *ngFor="let article of displayedArticles['twitter']" class="col">
           <div class="card h-100">
             <div class="card-body">
-              <div *ngIf="article?.embeddedHtml; else loadingTweet" [innerHTML]="article.embeddedHtml"></div>
+              <div *ngIf="article?.embeddedHtml; else loadingTweet" [innerHTML]="article.embeddedHtml" #tweetContainer></div>
               <ng-template #loadingTweet>
                 <div class="tweet-placeholder">
+                  <div class="tweet-skeleton"></div>
                   <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Loading...</span>
                   </div>
