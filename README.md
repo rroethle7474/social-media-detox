@@ -64,4 +64,62 @@ The performance right now of the site is not great and I've noticed some high me
 - Authentication is role-based with 'Admin' and 'Demo' roles.
 - The application routes are protected using AuthGuard and AdminGuard where appropriate.
 
+# Local Development Setup
 
+## Prerequisites
+- [Node.js](https://nodejs.org/) (v16 or later)
+- [npm](https://www.npmjs.com/) (comes with Node.js)
+- [Angular CLI](https://angular.io/cli) (v17.1.x)
+- [Git](https://git-scm.com/) for cloning the repository
+- [Social Media Detox API](https://github.com/rroethle7474/DopamineDetoxAPI) running locally
+
+## Installation Steps
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/rroethle7474/social-media-detox.git
+   cd social-media-detox
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Configure API endpoint**
+   - Make sure the Social Media Detox API is running locally
+   - If needed, update the API URL in the environment configuration files located in `src/environments/`
+
+4. **Start the development server**
+   ```bash
+   npm start
+   ```
+   Or alternatively, you can use the Angular CLI directly:
+   ```bash
+   ng serve
+   ```
+   This will start the Angular development server. Navigate to `http://localhost:4200/` in your browser. The application will automatically reload if you change any of the source files.
+
+5. **Build for production**
+   ```bash
+   npm run build
+   ```
+   The build artifacts will be stored in the `dist/` directory.
+
+## Running the Required Backend Services
+
+For full functionality, you'll need to run:
+
+1. **Social Media Detox API**
+   - Clone from: https://github.com/rroethle7474/DopamineDetoxAPI
+   - Follow the setup instructions in its README
+
+2. **Azure Functions for SignalR** (optional for real-time updates)
+   - Clone from: https://github.com/rroethle7474/DopamineDetoxFunction
+   - Follow the setup instructions in its README
+
+## Troubleshooting
+
+- If you encounter CORS issues, ensure the API is configured to allow requests from your frontend origin (`http://localhost:4200`)
+- For authentication issues, check if the API is properly configured for local development
+- The first API request may be slow due to the "warm-up" period mentioned in the Known Issues section
