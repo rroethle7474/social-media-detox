@@ -17,6 +17,7 @@ export class DefaultTopicComponent implements OnInit {
   defaultTopics: DefaultTopicDto[] = [];
   editingDefaultTopic: DefaultTopicDto | null = null;
   editedTerm: string = '';
+  editedExcludeFromTwitter: boolean = false;
   termMaxLength = 100;
 
   constructor(
@@ -44,13 +45,15 @@ export class DefaultTopicComponent implements OnInit {
   handleEditDefaultTopic(defaultTopic: DefaultTopicDto): void {
     this.editingDefaultTopic = defaultTopic;
     this.editedTerm = defaultTopic.term;
+    this.editedExcludeFromTwitter = defaultTopic.excludeFromTwitter;
   }
 
   handleSaveEdit(): void {
     if (this.editingDefaultTopic && this.editedTerm.trim() !== '') {
       this.apiService.updateDefaultTopic({
         ...this.editingDefaultTopic,
-        term: this.editedTerm.trim()
+        term: this.editedTerm.trim(),
+        excludeFromTwitter: this.editedExcludeFromTwitter
       }).subscribe({
         next: () => {
           this.fetchDefaultTopics();
@@ -68,6 +71,7 @@ export class DefaultTopicComponent implements OnInit {
   cancelEdit(): void {
     this.editingDefaultTopic = null;
     this.editedTerm = '';
+    this.editedExcludeFromTwitter = false;
   }
 
   handleDeleteDefaultTopic(id: number): void {

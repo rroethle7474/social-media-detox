@@ -14,6 +14,7 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class AddDefaultTopicComponent {
   newTerm = '';
+  excludeFromTwitter = false;
   termMaxLength = 100;
   termTouched = false;
 
@@ -29,6 +30,7 @@ export class AddDefaultTopicComponent {
       this.apiService
         .createDefaultTopic({
           term: this.newTerm.trim(),
+          excludeFromTwitter: this.excludeFromTwitter
         })
         .subscribe({
           next: () => {

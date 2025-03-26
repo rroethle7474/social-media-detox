@@ -17,6 +17,7 @@ import { ToastrService } from 'ngx-toastr';
 export class AddTopicComponent implements OnInit {
   newTopic = '';
   isActive = true;
+  excludeFromTwitter = false;
   maxLength = 100;
   touched = false;
   currentUser: ApplicationUserDto | null = null;
@@ -43,6 +44,7 @@ export class AddTopicComponent implements OnInit {
           isActive: this.isActive,
           term: this.newTopic.trim(),
           userId: this.currentUser.id,
+          excludeFromTwitter: this.excludeFromTwitter
         })
         .subscribe({
           next: () => {

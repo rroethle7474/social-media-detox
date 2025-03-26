@@ -22,6 +22,7 @@ export class TopicComponent implements OnInit {
   editingTopic: TopicDto | null = null;
   editedTerm: string = '';
   editedIsActive: boolean = false;
+  editedExcludeFromTwitter: boolean = false;
   currentUser: ApplicationUserDto | null = null;
 
   constructor(
@@ -60,6 +61,7 @@ export class TopicComponent implements OnInit {
     this.editingTopic = topic;
     this.editedTerm = topic.term;
     this.editedIsActive = topic.isActive;
+    this.editedExcludeFromTwitter = topic.excludeFromTwitter;
   }
 
   handleSaveEdit(): void {
@@ -67,7 +69,8 @@ export class TopicComponent implements OnInit {
       this.apiService.updateTopic({
         ...this.editingTopic,
         term: this.editedTerm.trim(),
-        isActive: this.editedIsActive
+        isActive: this.editedIsActive,
+        excludeFromTwitter: this.editedExcludeFromTwitter
       }).subscribe({
         next: () => {
           this.fetchTopics();
@@ -86,6 +89,7 @@ export class TopicComponent implements OnInit {
     this.editingTopic = null;
     this.editedTerm = '';
     this.editedIsActive = false;
+    this.editedExcludeFromTwitter = false;
   }
 
   handleDeleteTopic(id: number): void {

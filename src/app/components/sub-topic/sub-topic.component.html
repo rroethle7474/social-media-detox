@@ -17,6 +17,7 @@
               <th>Term</th>
               <th>Topic</th>
               <th>Status</th>
+              <th>Twitter</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -71,6 +72,26 @@
                     />
                     <label class="form-check-label" for="editStatus{{subTopic.id}}">
                       Active
+                    </label>
+                  </div>
+                </ng-template>
+              </td>
+              <td>
+                <ng-container *ngIf="editingSubTopic?.id !== subTopic.id; else editTwitterMode">
+                  <span class="badge" [ngClass]="{'bg-warning': subTopic.excludeFromTwitter, 'bg-info': !subTopic.excludeFromTwitter}">
+                    {{ subTopic.excludeFromTwitter ? 'Excluded' : 'Included' }}
+                  </span>
+                </ng-container>
+                <ng-template #editTwitterMode>
+                  <div class="form-check">
+                    <input
+                      type="checkbox"
+                      class="form-check-input"
+                      [(ngModel)]="editedExcludeFromTwitter"
+                      id="editTwitter{{subTopic.id}}"
+                    />
+                    <label class="form-check-label" for="editTwitter{{subTopic.id}}">
+                      Exclude From Twitter
                     </label>
                   </div>
                 </ng-template>

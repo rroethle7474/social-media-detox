@@ -3,4 +3,5 @@ export interface TopicDto {
   isActive: boolean;
   term: string;
   userId: string;
+  excludeFromTwitter: boolean;
 }

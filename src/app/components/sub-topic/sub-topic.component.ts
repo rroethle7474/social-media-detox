@@ -21,6 +21,7 @@ export class SubTopicComponent implements OnInit {
   editingSubTopic: SubTopicDto | null = null;
   editedTerm: string = '';
   editedIsActive: boolean = false;
+  editedExcludeFromTwitter: boolean = false;
   editedTopicId: number | null = null;
   currentUser: ApplicationUserDto | null = null;
   termMaxLength = 1000;
@@ -74,6 +75,7 @@ export class SubTopicComponent implements OnInit {
     this.editingSubTopic = subTopic;
     this.editedTerm = subTopic.term;
     this.editedIsActive = subTopic.isActive;
+    this.editedExcludeFromTwitter = subTopic.excludeFromTwitter;
     this.editedTopicId = subTopic.topicId;
   }
 
@@ -87,6 +89,7 @@ export class SubTopicComponent implements OnInit {
         ...this.editingSubTopic,
         term: this.editedTerm.trim(),
         isActive: this.editedIsActive,
+        excludeFromTwitter: this.editedExcludeFromTwitter,
         topicId: this.editedTopicId
       }).subscribe({
         next: () => {
@@ -108,6 +111,7 @@ export class SubTopicComponent implements OnInit {
     this.editingSubTopic = null;
     this.editedTerm = '';
     this.editedIsActive = false;
+    this.editedExcludeFromTwitter = false;
     this.editedTopicId = null;
   }
 

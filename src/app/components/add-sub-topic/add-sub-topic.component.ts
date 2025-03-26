@@ -19,6 +19,7 @@ import { ApplicationUserDto } from '../../models/Dtos/application-user.dto';
 export class AddSubTopicComponent implements OnInit {
   newSubTopic = '';
   isActive = true;
+  excludeFromTwitter = false;
   selectedTopicId: number | null = null;
   topics: TopicDto[] = [];
   currentUser: ApplicationUserDto | null = null;
@@ -65,6 +66,7 @@ export class AddSubTopicComponent implements OnInit {
           term: this.newSubTopic.trim(),
           topicId: this.selectedTopicId,
           userId: this.currentUser.id,
+          excludeFromTwitter: this.excludeFromTwitter
         })
         .subscribe({
           next: () => {

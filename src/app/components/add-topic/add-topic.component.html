@@ -37,6 +37,18 @@
                 <label class="form-check-label" for="isActive">Is Active</label>
               </div>
             </div>
+            <div class="mb-3">
+              <div class="form-check">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  id="excludeFromTwitter"
+                  [(ngModel)]="excludeFromTwitter"
+                  name="excludeFromTwitter"
+                />
+                <label class="form-check-label" for="excludeFromTwitter">Exclude From Twitter</label>
+              </div>
+            </div>
           </div>
           <div class="card-footer d-flex justify-content-between">
             <button

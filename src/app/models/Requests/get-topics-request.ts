@@ -3,4 +3,5 @@ export interface GetTopicsRequest {
     isActive?: boolean;
     term?: string;
     userId?: string;
+    excludeFromTwitter?: boolean;
   }

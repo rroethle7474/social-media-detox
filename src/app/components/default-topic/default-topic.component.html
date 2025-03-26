@@ -16,6 +16,7 @@
             <tr>
               <th>ID</th>
               <th>Term</th>
+              <th>Twitter</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -38,6 +39,26 @@
                     />
                     <small class="text-muted">{{ editedTerm.length }}/{{ termMaxLength }}</small>
                   </form>
+                </ng-template>
+              </td>
+              <td>
+                <ng-container *ngIf="editingDefaultTopic?.id !== defaultTopic.id; else editTwitterMode">
+                  <span class="badge" [ngClass]="{'bg-warning': defaultTopic.excludeFromTwitter, 'bg-info': !defaultTopic.excludeFromTwitter}">
+                    {{ defaultTopic.excludeFromTwitter ? 'Excluded' : 'Included' }}
+                  </span>
+                </ng-container>
+                <ng-template #editTwitterMode>
+                  <div class="form-check">
+                    <input
+                      type="checkbox"
+                      class="form-check-input"
+                      [(ngModel)]="editedExcludeFromTwitter"
+                      id="editTwitter{{defaultTopic.id}}"
+                    />
+                    <label class="form-check-label" for="editTwitter{{defaultTopic.id}}">
+                      Exclude From Twitter
+                    </label>
+                  </div>
                 </ng-template>
               </td>
               <td>
