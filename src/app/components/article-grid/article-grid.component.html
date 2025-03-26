@@ -81,6 +81,13 @@
                   Top Result
                 </label>
               </div>
+              <div class="form-check mt-2" *ngIf="shouldShowDeleteOption(article)">
+                <input class="form-check-input" type="checkbox" [id]="'delete' + article.id"
+                       (change)="markForDeletion(article)">
+                <label class="form-check-label" [for]="'delete' + article.id">
+                  Remove Result
+                </label>
+              </div>
               <button class="btn btn-primary mt-2" (click)="openNoteModal(article)">View Notes</button>
             </div>
           </div>
@@ -125,6 +132,13 @@
                 <input class="form-check-input" type="checkbox" [id]="'topResult' + article.id" [(ngModel)]="article.topSearchResult" (change)="toggleTopResult(article)">
                 <label class="form-check-label" [for]="'topResult' + article.id">
                   Top Result
+                </label>
+              </div>
+              <div class="form-check mt-2" *ngIf="shouldShowDeleteOption(article)">
+                <input class="form-check-input" type="checkbox" [id]="'delete' + article.id"
+                       (change)="markForDeletion(article)">
+                <label class="form-check-label" [for]="'delete' + article.id">
+                  Remove Result
                 </label>
               </div>
               <button class="btn btn-primary mt-2" (click)="openNoteModal(article)">View Notes</button>
