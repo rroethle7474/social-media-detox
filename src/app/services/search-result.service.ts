@@ -21,4 +21,8 @@ export class SearchResultService extends BaseDopamineDetoxApiService {
     console.log("Sending update to API:", searchResult);
     return this.http.put<SearchResultDto>(`${this.API_BASE_URL}/SearchResult/${searchResult.id}`, searchResult);
   }
+  
+  deleteSearchResult(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.API_BASE_URL}/SearchResult/${id}`);
+  }
 }

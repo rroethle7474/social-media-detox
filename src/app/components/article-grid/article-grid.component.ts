@@ -468,32 +468,28 @@ export class ArticleGridComponent implements OnInit, OnDestroy {
 
   markForDeletion(article: SearchResultDto) {
     if (confirm('Are you sure you want to remove this search result?')) {
-      // Here we would call the service to delete the search result
-      // For now, we'll just remove it from the local arrays
-      this.allArticles = this.allArticles.filter(a => a.id !== article.id);
-      this.filteredArticles = this.filteredArticles.filter(a => a.id !== article.id);
-      
-      if (article.contentTypeId === 2) {
-        this.youtubeArticles = this.youtubeArticles.filter(a => a.id !== article.id);
-        this.displayedArticles['youtube'] = this.displayedArticles['youtube'].filter(a => a.id !== article.id);
-      } else if (article.contentTypeId === 1) {
-        this.twitterArticles = this.twitterArticles.filter(a => a.id !== article.id);
-        this.displayedArticles['twitter'] = this.displayedArticles['twitter'].filter(a => a.id !== article.id);
-      }
-      
-      this.toastr.success('Search result removed successfully');
-      
-      // TODO: Implement actual deletion via service
-      // this.searchResultService.deleteSearchResult(article.id).subscribe({
-      //   next: () => {
-      //     this.toastr.success('Search result removed successfully');
-      //   },
-      //   error: (error) => {
-      //     console.error('Error removing search result:', error);
-      //     this.toastr.error('Error removing search result');
-      //     this.loadAllArticles(); // Reload to restore state
-      //   }
-      // });
+      // Call the service to delete the search result
+      this.searchResultService.deleteSearchResult(article.id).subscribe({
+        next: () => {
+          // Remove from local arrays after successful deletion
+          this.allArticles = this.allArticles.filter(a => a.id !== article.id);
+          this.filteredArticles = this.filteredArticles.filter(a => a.id !== article.id);
+          
+          if (article.contentTypeId === 2) {
+            this.youtubeArticles = this.youtubeArticles.filter(a => a.id !== article.id);
+            this.displayedArticles['youtube'] = this.displayedArticles['youtube'].filter(a => a.id !== article.id);
+          } else if (article.contentTypeId === 1) {
+            this.twitterArticles = this.twitterArticles.filter(a => a.id !== article.id);
+            this.displayedArticles['twitter'] = this.displayedArticles['twitter'].filter(a => a.id !== article.id);
+          }
+          
+          this.toastr.success('Search result removed successfully');
+        },
+        error: (error) => {
+          console.error('Error removing search result:', error);
+          this.toastr.error('Error removing search result');
+        }
+      });
     }
   }
 }
